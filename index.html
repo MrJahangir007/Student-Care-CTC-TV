@@ -4,15 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Student Care-CTC TV Player</title>
+    <link rel="manifest" href="data:application/json,{&quot;name&quot;:&quot;CTC TV Player&quot;,&quot;short_name&quot;:&quot;CTC TV&quot;,&quot;start_url&quot;:&quot;.&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;background_color&quot;:&quot;#0a0a15&quot;,&quot;theme_color&quot;:&quot;#e94560&quot;,&quot;icons&quot;:[{&quot;src&quot;:&quot;https://i.postimg.cc/3RWLXLS4/Studentcare-IPTV.png&quot;,&quot;sizes&quot;:&quot;192x192&quot;,&quot;type&quot;:&quot;image/png&quot;}]}" />
+    <link rel="icon" type="image/png" href="https://i.postimg.cc/3RWLXLS4/Studentcare-IPTV.png" />
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/mpegts.js@latest"></script>
     <style>
-        /* ===== রিসেট ===== */
+        /* ===== GLOBAL RESET ===== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', system-ui, sans-serif;
         }
         body {
             background: #0a0a15;
@@ -23,22 +25,24 @@
             overflow: hidden;
         }
 
-        /* ===== হেডার ===== */
+        /* ===== HEADER ===== */
         .header {
             background: linear-gradient(135deg, #0d0d20, #16162e);
-            padding: 6px 14px;
+            padding: 6px 12px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             border-bottom: 2px solid #e94560;
             flex-shrink: 0;
             z-index: 10;
-            min-height: 48px;
+            min-height: 50px;
+            position: relative;
         }
         .header-left {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
+            flex-shrink: 0;
         }
         .menu-btn {
             font-size: 24px;
@@ -48,49 +52,159 @@
             cursor: pointer;
             padding: 4px 6px;
         }
+        .header-left .logo-img {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            object-fit: contain;
+            background: #0a0a18;
+        }
         .header-title {
-            font-size: 1rem;
+            font-size: 1.5rem;
             font-weight: 700;
             color: #fff;
+            white-space: nowrap;
         }
         .header-title span {
             color: #e94560;
         }
         .header-title .sub {
-            font-size: 0.5rem;
+            font-size: 0.6rem;
             font-weight: 400;
             color: #888;
             display: block;
         }
+        .header-center {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            pointer-events: none;
+        }
+        .header-center .clock {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #fff;
+            background: rgba(0,0,0,0.3);
+            padding: 2px 14px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        .header-center .date {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #ffaa00;
+            background: rgba(0,0,0,0.2);
+            padding: 2px 12px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+            margin-left: auto;
+        }
+        .header-right button {
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 4px 6px;
+            border-radius: 4px;
+            transition: 0.2s;
+        }
+        .header-right button:hover {
+            background: rgba(255,255,255,0.08);
+            color: #e94560;
+        }
         .status-badge {
             background: #2d2d44;
-            padding: 3px 12px;
+            padding: 3px 10px;
             border-radius: 30px;
             font-size: 0.6rem;
             border: 1px solid #ff8800;
             color: #ff8800;
             white-space: nowrap;
         }
+        .notif-btn {
+            position: relative;
+        }
+        .notif-btn .badge {
+            position: absolute;
+            top: -4px;
+            right: -6px;
+            background: #e94560;
+            color: #fff;
+            font-size: 0.5rem;
+            border-radius: 50%;
+            padding: 1px 5px;
+            min-width: 16px;
+            text-align: center;
+        }
 
-        /* ===== সাইডবার ===== */
-        .sidebar {
+        /* ===== NOTIFICATION PANEL ===== */
+        .notif-panel {
             position: fixed;
             top: 0;
-            left: -440px;
-            width: 440px;
+            right: -380px;
+            width: 380px;
             max-width: 94vw;
             height: 100%;
             background: #0c0c1e;
-            border-right: 2px solid #e94560;
-            padding: 12px 16px 80px;
-            transition: 0.3s ease;
+            border-left: 2px solid #e94560;
+            padding: 16px;
+            transition: right 0.3s ease;
+            z-index: 10002;
+            overflow-y: auto;
+            box-shadow: -4px 0 20px rgba(0,0,0,0.7);
+        }
+        .notif-panel.open { right: 0; }
+        .notif-panel .close-btn {
+            float: right;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .notif-panel h3 {
+            color: #e94560;
+            border-bottom: 1px solid #1a1a30;
+            padding-bottom: 8px;
+            margin-bottom: 12px;
+        }
+        .notif-item {
+            padding: 8px 10px;
+            border-bottom: 1px solid #1a1a30;
+            font-size: 0.8rem;
+            color: #ccc;
+        }
+        .notif-item .title { color: #ff8800; font-weight: 600; }
+        .notif-item .time { color: #666; font-size: 0.6rem; }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #0a0a18;
+            padding: 16px 18px 80px;
+            transform: translateX(-100%);
+            transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
             z-index: 999;
             overflow-y: auto;
             scroll-behavior: smooth;
         }
-        .sidebar.open {
-            left: 0;
-        }
+        .sidebar.open { transform: translateX(0); }
         .sidebar .close-btn {
             position: sticky;
             top: 0;
@@ -98,38 +212,32 @@
             background: none;
             border: none;
             color: #fff;
-            font-size: 22px;
+            font-size: 26px;
             cursor: pointer;
             padding: 4px 8px;
             z-index: 10;
-            background: #0c0c1e;
+            background: #0a0a18;
         }
         .sidebar .section {
-            margin-bottom: 16px;
+            margin-bottom: 18px;
             border-bottom: 1px solid #1a1a30;
-            padding-bottom: 12px;
+            padding-bottom: 14px;
         }
-        .sidebar .section:last-child {
-            border-bottom: none;
-        }
+        .sidebar .section:last-child { border-bottom: none; margin-bottom: 0; }
         .sidebar .section-title {
             font-size: 0.9rem;
             font-weight: 700;
             color: #e94560;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             margin-bottom: 8px;
-            cursor: pointer;
-        }
-        .sidebar .section-title .icon {
-            font-size: 1.1rem;
         }
         .sidebar label {
             display: block;
-            margin-top: 8px;
+            margin-top: 6px;
             font-weight: 600;
-            color: #ccc;
+            color: #bbb;
             font-size: 0.75rem;
         }
         .sidebar input[type="file"],
@@ -137,17 +245,15 @@
         .sidebar input[type="password"],
         .sidebar input[type="url"] {
             width: 100%;
-            padding: 6px 10px;
+            padding: 7px 10px;
             margin-top: 3px;
             background: #1a1a30;
-            border: 1px solid #3a3a5a;
+            border: 1px solid #2a2a4a;
             border-radius: 6px;
             color: #fff;
             font-size: 0.8rem;
         }
-        .sidebar input::placeholder {
-            color: #666;
-        }
+        .sidebar input::placeholder { color: #555; }
         .sidebar .btn {
             background: #e94560;
             color: #fff;
@@ -161,43 +267,29 @@
             font-size: 0.8rem;
             display: inline-block;
         }
-        .sidebar .btn:hover {
-            background: #c73652;
-            transform: scale(1.02);
-        }
-        .sidebar .btn-sm {
-            padding: 3px 10px;
+        .sidebar .btn:hover { background: #c73652; transform: scale(1.02); }
+        .sidebar .btn-sm { padding: 4px 10px; font-size: 0.7rem; }
+        .btn-group { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 4px; }
+        .btn-secondary { background: #2a3a5a; }
+        .btn-secondary:hover { background: #3a4a7a; }
+        .btn-danger { background: #8a2a2a; }
+        .btn-danger:hover { background: #aa3a3a; }
+        .btn-success { background: #1a7a4a; }
+        .btn-success:hover { background: #2a9a5a; }
+        .btn-about { background: #6a3a8a; }
+        .load-status {
             font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 4px;
+            margin-top: 4px;
+            background: #0a0a18;
         }
-        .sidebar .btn-secondary {
-            background: #2a3a5a;
-        }
-        .sidebar .btn-secondary:hover {
-            background: #3a4a7a;
-        }
-        .sidebar .btn-danger {
-            background: #8a2a2a;
-        }
-        .sidebar .btn-danger:hover {
-            background: #aa3a3a;
-        }
-        .sidebar .btn-success {
-            background: #1a7a4a;
-        }
-        .sidebar .btn-success:hover {
-            background: #2a9a5a;
-        }
-        .sidebar .btn-about {
-            background: #6a3a8a;
-        }
-        .sidebar .btn-about:hover {
-            background: #8a4aaa;
-        }
-
-        /* প্লেলিস্ট */
+        .load-status.success { color: #00ff88; }
+        .load-status.error { color: #ff4444; }
+        .load-status.loading { color: #ffaa00; }
         .playlist-list {
             margin-top: 6px;
-            max-height: 120px;
+            max-height: 110px;
             overflow-y: auto;
             background: #0a0a18;
             border-radius: 6px;
@@ -207,7 +299,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 3px 6px;
+            padding: 4px 6px;
             border-bottom: 1px solid #1a1a30;
             font-size: 0.7rem;
             color: #ccc;
@@ -216,7 +308,7 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 200px;
+            max-width: 180px;
         }
         .playlist-item .pl-actions button {
             background: none;
@@ -226,203 +318,69 @@
             font-size: 0.7rem;
             margin-left: 4px;
         }
-        .playlist-item .pl-actions button:hover {
-            color: #ff8800;
-        }
-
-        /* টগল */
         .toggle-wrap {
             display: flex;
             align-items: center;
             gap: 10px;
             margin: 4px 0;
         }
-        .toggle-wrap input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            accent-color: #e94560;
+        .toggle-wrap input { width: 18px; height: 18px; accent-color: #e94560; }
+        .toggle-wrap label { margin: 0; font-size: 0.8rem; color: #ccc; }
+        .dmca-notice {
+            font-size: 0.6rem;
+            color: #555;
+            border-top: 1px solid #1a1a30;
+            padding-top: 10px;
+            margin-top: 10px;
+            line-height: 1.5;
+            text-align: justify;
         }
-        .toggle-wrap label {
-            margin: 0;
-            font-size: 0.8rem;
-            color: #ccc;
-        }
+        .dmca-notice strong { color: #777; }
 
-        /* স্পোর্টস */
-        .sports-tabs {
-            display: flex;
-            gap: 4px;
-            flex-wrap: wrap;
-            margin: 6px 0;
-        }
-        .sports-tabs button {
-            background: #1a1a30;
-            border: 1px solid #2a2a4a;
-            color: #ccc;
-            padding: 3px 12px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 0.7rem;
-            transition: 0.2s;
-        }
-        .sports-tabs button:hover {
-            background: #2a2a4a;
-        }
-        .sports-tabs button.active {
-            background: #e94560;
-            color: #fff;
-            border-color: #e94560;
-        }
-        .sports-content {
-            background: #0a0a18;
-            padding: 6px 8px;
+        /* ===== VPN SECTION ===== */
+        .vpn-section {
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(0,200,255,0.05);
+            border: 1px solid rgba(0,200,255,0.15);
             border-radius: 8px;
-            font-size: 0.7rem;
-            max-height: 220px;
-            overflow-y: auto;
-            border: 1px solid #1a1a30;
         }
-        .sports-content table {
-            width: 100%;
-            border-collapse: collapse;
-            color: #ddd;
-        }
-        .sports-content td,
-        .sports-content th {
-            padding: 3px 5px;
-            border-bottom: 1px solid #1a1a30;
-            font-size: 0.65rem;
-        }
-        .sports-content th {
-            color: #888;
-            font-weight: 600;
-            text-align: left;
-        }
-        .sports-content .team {
-            color: #fff;
-            font-weight: 500;
-        }
-        .sports-content .score {
-            color: #ffaa00;
-            font-weight: 700;
-        }
-        .sports-content .date {
-            color: #888;
-            font-size: 0.6rem;
-        }
-        .sports-content .live {
-            color: #00ff88;
-            font-weight: 700;
-        }
-        .sports-content .vs {
-            color: #666;
-        }
-        .sports-content .group {
-            color: #ff8800;
-            font-size: 0.6rem;
-        }
-
-        /* ===== About মোডাল ===== */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            z-index: 9999;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        .modal-overlay.active {
+        .vpn-section .vpn-toggle {
             display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 4px 0;
         }
-        .modal-box {
-            background: #14142a;
-            border: 2px solid #e94560;
-            border-radius: 16px;
-            padding: 24px 28px;
-            max-width: 540px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            position: relative;
-            box-shadow: 0 20px 60px rgba(233, 69, 96, 0.2);
-        }
-        .modal-box .modal-close {
-            position: absolute;
-            top: 12px;
-            right: 16px;
-            background: none;
-            border: none;
-            color: #fff;
-            font-size: 26px;
-            cursor: pointer;
-        }
-        .modal-box .modal-title {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: #e94560;
-            margin-bottom: 12px;
-        }
-        .modal-box .modal-body {
-            font-size: 1rem;
-            /* বড় করা হলো */
-            color: #ddd;
-            line-height: 1.7;
-        }
-        .modal-box .modal-body .dev {
-            color: #fff;
-            font-weight: 700;
-            font-size: 1.2rem;
-        }
-        .modal-box .modal-body a {
-            color: #e94560;
-            text-decoration: none;
-        }
-        .modal-box .modal-body .feature-list {
-            list-style: none;
-            padding: 0;
-            margin: 8px 0;
-        }
-        .modal-box .modal-body .feature-list li {
-            padding: 4px 0;
-            border-bottom: 1px solid #1a1a30;
-            font-size: 0.95rem;
-        }
-        .modal-box .modal-body .feature-list li::before {
-            content: "▸ ";
-            color: #e94560;
-        }
+        .vpn-section .vpn-toggle input { width: 18px; height: 18px; accent-color: #00ccff; }
+        .vpn-section .vpn-toggle label { font-size: 0.8rem; color: #ccc; }
+        .vpn-section .vpn-status { font-size: 0.65rem; color: #666; margin-top: 4px; }
+        .vpn-section .vpn-status.active { color: #00ff88; }
+        .vpn-help { font-size: 0.7rem; color: #888; margin-top: 6px; line-height: 1.5; }
+        .vpn-help a { color: #00ccff; text-decoration: none; }
 
-        /* ===== নোটিফিকেশন টোস্ট ===== */
+        /* ===== TOAST ===== */
         .toast-container {
             position: fixed;
-            bottom: 80px;
-            right: 20px;
-            z-index: 10000;
+            bottom: 70px;
+            right: 16px;
+            z-index: 10001;
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            max-width: 340px;
+            gap: 8px;
+            max-width: 300px;
         }
         .toast {
             background: #1a1a30;
             border-left: 4px solid #e94560;
-            padding: 12px 16px;
+            padding: 10px 14px;
             border-radius: 8px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.5);
             color: #eee;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             animation: slideIn 0.4s ease;
             border: 1px solid #2a2a4a;
         }
-        .toast .toast-title {
-            font-weight: 700;
-            color: #ff8800;
-        }
+        .toast .toast-title { font-weight: 700; color: #ff8800; }
         .toast .toast-close {
             float: right;
             background: none;
@@ -432,48 +390,118 @@
             font-size: 1rem;
         }
         @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
 
-        /* ===== ওভারলে ===== */
-        .overlay {
+        /* ===== ABOUT MODAL ===== */
+        .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 998;
+            background: rgba(0,0,0,0.85);
+            z-index: 10000;
             display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
         }
-        .overlay.active {
-            display: block;
+        .modal-overlay.active { display: flex; }
+        .modal-box {
+            background: #14142a;
+            border: 2px solid #e94560;
+            border-radius: 16px;
+            padding: 24px 28px;
+            max-width: 560px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
         }
+        .modal-box .modal-close {
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .modal-box .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #e94560;
+            margin-bottom: 12px;
+        }
+        .modal-box .modal-body {
+            font-size: 1rem;
+            color: #ddd;
+            line-height: 1.8;
+        }
+        .modal-box .modal-body .feature-list { list-style: none; padding: 0; }
+        .modal-box .modal-body .feature-list li {
+            padding: 5px 0;
+            border-bottom: 1px solid #1a1a30;
+            font-size: 0.95rem;
+        }
+        .modal-box .modal-body .feature-list li::before { content: "▸ "; color: #e94560; }
+        .modal-box .dmca-modal {
+            margin-top: 14px;
+            padding: 14px;
+            background: rgba(255,0,0,0.05);
+            border: 1px solid rgba(255,68,68,0.2);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #aaa;
+            line-height: 1.6;
+        }
+        .modal-box .dmca-modal strong { color: #ff6666; }
+        .modal-box .dev-details {
+            margin-top: 12px;
+            padding: 12px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            color: #ccc;
+            line-height: 1.8;
+        }
+        .modal-box .dev-details strong { color: #fff; }
+        .modal-box .dev-details a { color: #e94560; text-decoration: none; }
 
-        /* ===== মূল কন্টেন্ট ===== */
+        /* ===== MAIN LAYOUT ===== */
         .main-content {
             flex: 1;
             display: flex;
-            flex-direction: column;
-            padding: 4px 10px 0;
+            flex-direction: row;
+            padding: 6px 10px 0;
             overflow: hidden;
+            gap: 10px;
+        }
+        .video-section {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+        .channel-section {
+            flex: 1.2;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            border-left: 1px solid #1a1a30;
+            padding-left: 10px;
         }
 
-        /* ===== ভিডিও ===== */
+        /* ===== VIDEO ===== */
         .video-wrapper {
             background: #000;
             border-radius: 10px;
             overflow: hidden;
             position: relative;
             aspect-ratio: 16 / 9;
-            max-height: 44vh;
             width: 100%;
             border: 1px solid #2a2a48;
             flex-shrink: 0;
@@ -483,43 +511,195 @@
             height: 100%;
             display: block;
             background: #000;
+            cursor: pointer;
         }
+        /* রেডিও ভিজ্যুয়ালাইজার সম্পূর্ণ ডিলিট – শুধু কালো ব্যাকগ্রাউন্ড */
         .video-wrapper .status-msg {
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
+            transform: translate(-50%,-50%);
             color: #ddd;
             text-align: center;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 14px 20px;
+            background: rgba(0,0,0,0.85);
+            padding: 12px 20px;
             border-radius: 10px;
-            pointer-events: none;
+            pointer-events: auto;
             font-size: 0.85rem;
             border: 1px solid #2a2a4a;
             max-width: 90%;
+            cursor: pointer;
+            transition: 0.2s;
+            user-select: none;
+            z-index: 3;
+        }
+        .video-wrapper .status-msg .close-msg {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #e94560;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
         }
         .video-wrapper .status-msg .spinner {
-            margin: 8px auto;
-            width: 28px;
-            height: 28px;
+            margin: 6px auto;
+            width: 24px;
+            height: 24px;
             border: 3px solid #333;
             border-top: 3px solid #e94560;
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* ===== CUSTOM CONTROLS ===== */
+        .custom-controls {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 8px 12px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 5;
+        }
+        .video-wrapper:hover .custom-controls,
+        .video-wrapper:focus-within .custom-controls {
+            opacity: 1;
+        }
+        .custom-controls button {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.1rem;
+            cursor: pointer;
+            padding: 4px 6px;
+            border-radius: 4px;
+            transition: 0.2s;
+            position: relative;
+        }
+        .custom-controls button:hover { background: rgba(255,255,255,0.1); color: #e94560; }
+        .custom-controls .progress-bar {
+            flex: 1;
+            height: 3px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 2px;
+            cursor: pointer;
+            position: relative;
+        }
+        .custom-controls .progress-bar .fill {
+            height: 100%;
+            background: #e94560;
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.1s;
+        }
+        .custom-controls .time-display {
+            font-size: 0.65rem;
+            color: rgba(255,255,255,0.5);
+            min-width: 60px;
+            text-align: center;
+        }
+        .custom-controls .volume-slider {
+            width: 50px;
+            height: 3px;
+            -webkit-appearance: none;
+            background: rgba(255,255,255,0.15);
+            border-radius: 2px;
+            outline: none;
+        }
+        .custom-controls .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 10px;
+            height: 10px;
+            background: #e94560;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        /* ===== 3-DOT MENU ===== */
+        .three-dot-menu {
+            position: relative;
+            display: inline-block;
+        }
+        .three-dot-menu .dropdown {
+            position: absolute;
+            bottom: 120%;
+            right: 0;
+            background: #1a1a30;
+            border: 1px solid #2a2a4a;
+            border-radius: 8px;
+            padding: 4px 0;
+            min-width: 140px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.7);
+            display: none;
+            z-index: 20;
+        }
+        .three-dot-menu .dropdown.show {
+            display: block;
+        }
+        .three-dot-menu .dropdown .dropdown-item {
+            padding: 6px 14px;
+            font-size: 0.75rem;
+            color: #ddd;
+            cursor: pointer;
+            transition: 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+        .three-dot-menu .dropdown .dropdown-item:hover {
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+        }
+        .three-dot-menu .dropdown .dropdown-item .icon {
+            font-size: 0.9rem;
+        }
+        .three-dot-menu .dropdown .dropdown-divider {
+            height: 1px;
+            background: #2a2a4a;
+            margin: 4px 8px;
+        }
+        .three-dot-menu .dropdown .speed-options {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            padding: 4px 8px;
+        }
+        .three-dot-menu .dropdown .speed-options .speed-btn {
+            background: #2a2a4a;
+            border: none;
+            color: #aaa;
+            padding: 2px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.65rem;
+            transition: 0.15s;
+        }
+        .three-dot-menu .dropdown .speed-options .speed-btn:hover {
+            background: #3a3a5a;
+            color: #fff;
+        }
+        .three-dot-menu .dropdown .speed-options .speed-btn.active {
+            background: #e94560;
+            color: #fff;
         }
 
-        /* ===== স্ট্যাটাস বার ===== */
+        /* ===== STATUS BAR ===== */
         .status-bar {
-            flex-shrink: 0;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -527,32 +707,27 @@
             border-bottom: 1px solid #1a1a30;
             padding: 4px 10px;
             margin-top: 4px;
-            min-height: 36px;
-            gap: 8px;
+            min-height: 44px;
+            gap: 6px;
+            flex-shrink: 0;
         }
         .status-bar .nav-arrow {
             background: #1a1a30;
             border: 1px solid #2a2a4a;
             border-radius: 30px;
             color: #e94560;
-            font-size: 0.75rem;
+            font-size: 1.1rem;
             font-weight: 700;
             cursor: pointer;
-            padding: 4px 14px;
+            padding: 4px 18px;
             transition: 0.2s;
-            line-height: 1.4;
             white-space: nowrap;
         }
-        .status-bar .nav-arrow:hover {
-            background: #e94560;
-            color: #fff;
-            border-color: #e94560;
-            transform: scale(1.05);
-        }
+        .status-bar .nav-arrow:hover { background: #e94560; color: #fff; border-color: #e94560; }
         .status-bar .channel-info {
             flex: 1;
             text-align: center;
-            font-size: 0.85rem;
+            font-size: 1.2rem;
             font-weight: 500;
             color: #ddd;
             display: flex;
@@ -567,221 +742,212 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 60%;
+            max-width: 50%;
         }
-        .status-bar .channel-info .ch-index {
-            color: #666;
-            font-size: 0.7rem;
-        }
+        .status-bar .channel-info .ch-index { color: #666; font-size: 0.8rem; }
         .equalizer {
             display: flex;
             align-items: flex-end;
             gap: 2px;
-            height: 20px;
+            height: 18px;
         }
         .equalizer .bar {
-            width: 4px;
-            height: 8px;
+            width: 3px;
+            height: 6px;
             background: #e94560;
             border-radius: 2px;
-            animation: eq 0.8s infinite alternate ease-in-out;
+            animation: eq 0.7s infinite alternate ease-in-out;
         }
-        .equalizer .bar:nth-child(2) {
-            height: 12px;
-            animation-delay: 0.1s;
-        }
-        .equalizer .bar:nth-child(3) {
-            height: 16px;
-            animation-delay: 0.2s;
-        }
-        .equalizer .bar:nth-child(4) {
-            height: 10px;
-            animation-delay: 0.3s;
-        }
-        .equalizer .bar:nth-child(5) {
-            height: 14px;
-            animation-delay: 0.15s;
-        }
-        @keyframes eq {
-            0% {
-                transform: scaleY(0.4);
-            }
-            100% {
-                transform: scaleY(1);
-            }
-        }
-        .equalizer.paused .bar {
-            animation: none;
-            height: 6px;
-            opacity: 0.3;
-        }
+        .equalizer .bar:nth-child(2) { height: 10px; animation-delay: 0.1s; }
+        .equalizer .bar:nth-child(3) { height: 14px; animation-delay: 0.2s; }
+        .equalizer .bar:nth-child(4) { height: 8px; animation-delay: 0.3s; }
+        .equalizer .bar:nth-child(5) { height: 12px; animation-delay: 0.15s; }
+        @keyframes eq { 0% { transform: scaleY(0.3); } 100% { transform: scaleY(1); } }
+        .equalizer.paused .bar { animation: none; height: 4px; opacity: 0.2; }
 
-        /* ===== চ্যানেল এরিয়া ===== */
-        .channel-area {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            min-height: 0;
-            margin-top: 4px;
-            border-top: 1px solid #1a1a30;
-            padding-top: 4px;
-        }
-        .channel-toolbar {
+        /* ===== CHANNEL SECTION ===== */
+        .channel-section .channel-toolbar-top {
             flex-shrink: 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             flex-wrap: wrap;
             padding-bottom: 4px;
             border-bottom: 1px solid #1a1a30;
             margin-bottom: 4px;
         }
-        .tab-bar {
+        .channel-section .view-toggle {
             display: flex;
-            gap: 4px;
-            flex-wrap: wrap;
-            overflow-x: auto;
-            flex: 1;
-        }
-        .tab-bar button {
-            background: #1a1a30;
-            border: 1px solid #2a2a4a;
-            color: #aaa;
-            padding: 2px 12px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 0.65rem;
-            font-weight: 600;
-            white-space: nowrap;
-            transition: 0.2s;
-        }
-        .tab-bar button:hover {
-            background: #2a2a4a;
-            color: #fff;
-        }
-        .tab-bar button.active {
-            background: #e94560;
-            color: #fff;
-            border-color: #e94560;
-        }
-        .tab-bar .count {
-            background: #2a2a4a;
-            padding: 0 6px;
-            border-radius: 10px;
-            font-size: 0.55rem;
-            margin-left: 3px;
-        }
-        .tab-bar button.active .count {
-            background: #fff;
-            color: #e94560;
-        }
-        .view-toggle {
-            display: flex;
-            gap: 4px;
+            gap: 3px;
             flex-shrink: 0;
         }
-        .view-toggle button {
+        .channel-section .view-toggle button {
             background: #1a1a30;
             border: 1px solid #2a2a4a;
             color: #aaa;
             padding: 2px 8px;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             transition: 0.2s;
         }
-        .view-toggle button:hover {
+        .channel-section .view-toggle button:hover { background: #2a2a4a; color: #fff; }
+        .channel-section .view-toggle button.active { background: #e94560; color: #fff; border-color: #e94560; }
+
+        .channel-section .tab-bar {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            overflow-x: auto;
+            flex: 1;
+            padding: 2px 0;
+        }
+        .channel-section .tab-bar button {
+            background: #1a1a30;
+            border: 1px solid #2a2a4a;
+            color: #aaa;
+            padding: 3px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            white-space: nowrap;
+            transition: 0.2s;
+        }
+        .channel-section .tab-bar button:hover { background: #2a2a4a; color: #fff; }
+        .channel-section .tab-bar button.active { background: #e94560; color: #fff; border-color: #e94560; }
+        .channel-section .tab-bar .count {
             background: #2a2a4a;
-            color: #fff;
+            padding: 0 5px;
+            border-radius: 10px;
+            font-size: 0.6rem;
+            margin-left: 3px;
         }
-        .view-toggle button.active {
+        .channel-section .tab-bar button.active .count { background: rgba(255,255,255,0.15); }
+
+        .search-bar {
+            flex-shrink: 0;
+            display: flex;
+            gap: 4px;
+            align-items: center;
+            padding: 4px 6px;
+            background: #0a0a18;
+            border-bottom: 1px solid #1a1a30;
+            margin-bottom: 4px;
+            flex-wrap: wrap;
+        }
+        .search-bar input {
+            flex: 1;
+            min-width: 50px;
+            background: #0a0a18;
+            border: 1px solid #2a2a4a;
+            border-radius: 20px;
+            padding: 3px 10px;
+            color: #fff;
+            font-size: 0.7rem;
+            height: 26px;
+        }
+        .search-bar input:focus { outline: none; border-color: #e94560; }
+        .search-bar .search-btn {
             background: #e94560;
+            border: none;
             color: #fff;
-            border-color: #e94560;
+            padding: 2px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            height: 26px;
         }
+        .search-bar .key-hint { font-size: 0.5rem; color: #444; }
 
         .channel-grid-wrapper {
             flex: 1;
             overflow-y: auto;
-            padding-bottom: 4px;
+            padding-bottom: 0;
+            min-height: 80px;
         }
         .channel-grid {
             display: grid;
             gap: 5px;
             transition: 0.2s;
         }
-        .channel-grid.grid-view {
-            grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
-        }
-        .channel-grid.list-view {
-            grid-template-columns: 1fr;
-        }
-        .channel-grid.list-view .channel-item {
-            padding: 6px 12px;
-        }
-        .channel-grid.list-view .channel-item .ch-name {
-            font-size: 0.8rem;
-            white-space: normal;
-        }
+        .channel-grid.grid-view { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+        .channel-grid.list-view { grid-template-columns: 1fr; }
+        .channel-grid.list-view .channel-item { padding: 4px 8px; }
+        .channel-grid.list-view .channel-item .ch-name { font-size: 0.8rem; white-space: normal; }
         .channel-grid.card-view {
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
         }
         .channel-grid.card-view .channel-item {
             flex-direction: column;
-            padding: 12px 8px;
+            padding: 10px 6px;
             text-align: center;
             border-radius: 10px;
             background: #14142a;
             border: 1px solid #2a2a4a;
+            transition: 0.25s;
+        }
+        .channel-grid.card-view .channel-item:hover {
+            transform: scale(1.05) translateY(-4px);
+            border-color: #e94560;
+            box-shadow: 0 8px 30px rgba(233,69,96,0.25);
         }
         .channel-grid.card-view .channel-item img {
             width: 48px;
             height: 48px;
             margin-bottom: 6px;
+            border-radius: 8px;
         }
         .channel-grid.card-view .channel-item .ch-name {
             font-size: 0.75rem;
             white-space: normal;
             text-align: center;
+            margin-bottom: 4px;
         }
         .channel-grid.card-view .channel-item .status-badge-sm {
-            display: block;
-            margin-top: 4px;
+            display: inline-block;
+            margin-top: 2px;
+            font-size: 0.55rem;
         }
+        .channel-grid.tile-view { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); }
+        .channel-grid.tile-view .channel-item {
+            flex-direction: column;
+            padding: 6px 2px;
+            text-align: center;
+            border-radius: 6px;
+            background: #14142a;
+            border: 1px solid #2a2a4a;
+        }
+        .channel-grid.tile-view .channel-item img { width: 28px; height: 28px; margin-bottom: 3px; }
+        .channel-grid.tile-view .channel-item .ch-name { font-size: 0.6rem; white-space: normal; text-align: center; }
+        .channel-grid.tile-view .channel-item .status-badge-sm { display: block; font-size: 0.45rem; }
 
         .channel-item {
             background: #14142a;
-            padding: 4px 8px;
+            padding: 4px 6px;
             border-radius: 6px;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
             cursor: pointer;
             border-left: 3px solid transparent;
             transition: 0.15s;
             border: 1px solid transparent;
-            position: relative;
         }
-        .channel-item:hover {
-            background: #1e1e3a;
-            border-color: #3a3a5a;
-        }
+        .channel-item:hover { background: #1e1e3a; border-color: #3a3a5a; }
         .channel-item.active {
-            background: #1e1e3a;
-            border-left-color: #ff8800;
-            border-color: #ff8800;
-        }
-        .channel-item.vlc-needed {
-            border-left-color: #ff4444;
-            opacity: 0.9;
-        }
-        .channel-item.working {
+            background: #1a2a1a;
             border-left-color: #00ff88;
+            border-color: #00ff88;
+            box-shadow: 0 0 25px rgba(0,255,136,0.4), inset 0 0 15px rgba(0,255,136,0.1);
+            transform: scale(1.03);
         }
+        .channel-item.working { border-left-color: #00ff88; }
+        .channel-item.not-working { border-left-color: #ff4444; opacity: 0.8; }
         .channel-item img {
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             object-fit: contain;
             background: #0a0a18;
             border-radius: 4px;
@@ -802,396 +968,405 @@
             flex-shrink: 0;
             font-weight: 600;
         }
-        .channel-item .status-badge-sm.working {
-            background: #1a7a4a;
-            color: #00ff88;
-        }
-        .channel-item .status-badge-sm.vlc {
-            background: #7a2a2a;
-            color: #ff6666;
-        }
-        .channel-item .status-badge-sm.unknown {
-            background: #2a2a4a;
-            color: #888;
-        }
+        .channel-item .status-badge-sm.working { background: #1a7a4a; color: #00ff88; }
+        .channel-item .status-badge-sm.not-working { background: #7a2a2a; color: #ff6666; }
+        .channel-item .status-badge-sm.unknown { background: #2a2a4a; color: #888; }
 
-        /* ===== সার্চ বার ===== */
-        .search-bar {
-            flex-shrink: 0;
-            display: flex;
-            gap: 6px;
-            align-items: center;
-            padding: 4px 8px;
-            background: #0a0a18;
-            border-top: 1px solid #1a1a30;
-            margin-top: 4px;
-            flex-wrap: wrap;
-        }
-        .search-bar input {
-            flex: 1;
-            min-width: 80px;
-            background: #0a0a18;
-            border: 1px solid #2a2a4a;
-            border-radius: 20px;
-            padding: 3px 12px;
-            color: #fff;
-            font-size: 0.7rem;
-            height: 28px;
-        }
-        .search-bar input:focus {
-            outline: none;
-            border-color: #e94560;
-        }
-        .search-bar .search-btn {
-            background: #e94560;
-            border: none;
-            color: #fff;
-            padding: 2px 16px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 0.7rem;
-            height: 28px;
-        }
-        .search-bar .key-hint {
-            font-size: 0.5rem;
-            color: #444;
-        }
-
-        /* ===== ফুটার ===== */
+        /* ===== FOOTER ===== */
         .footer {
             flex-shrink: 0;
             background: #060610;
-            padding: 2px 8px;
+            padding: 3px 8px;
             text-align: center;
-            font-size: 0.5rem;
+            font-size: 0.6rem;
             color: #555;
             border-top: 1px solid #1a1a30;
         }
-        .footer span {
-            color: #e94560;
+        .footer span { color: #e94560; }
+        .footer a { color: #e94560; text-decoration: none; }
+        .footer .dmca-footer { font-size: 0.5rem; color: #444; margin-top: 2px; }
+        .footer .dev-footer { font-size: 0.55rem; color: #666; margin-top: 2px; }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: #0a0a15; }
+        ::-webkit-scrollbar-thumb { background: #e94560; border-radius: 10px; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 992px) {
+            .main-content { flex-direction: column; gap: 6px; padding: 4px 6px 0; }
+            .channel-section { border-left: none; padding-left: 0; flex: none; height: 42vh; }
+            .video-section { flex: none; height: auto; }
+            .video-wrapper { max-height: 35vh; }
+            .channel-grid.grid-view { grid-template-columns: repeat(auto-fill, minmax(105px, 1fr)); }
+            .channel-grid.card-view { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+            .channel-grid.tile-view { grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); }
+            .header-center .clock { font-size: 1rem; }
+            .header-center .date { font-size: 0.75rem; }
+            .channel-section .tab-bar button { font-size: 0.8rem; padding: 2px 10px; }
+            .status-bar .nav-arrow { font-size: 1rem; padding: 3px 14px; }
+            .status-bar .channel-info { font-size: 1rem; }
+            .header-title { font-size: 1.2rem; }
+            .sidebar { padding: 12px 14px 60px; }
+            .header-center { position: static; transform: none; flex: 1; text-align: center; }
+            .header { flex-wrap: wrap; gap: 4px; }
+            .notif-panel { width: 320px; right: -320px; }
+            .search-bar { order: 0; border-bottom: 1px solid #1a1a30; border-top: none; margin-top: 0; }
         }
 
-        /* ===== স্ক্রল ===== */
-        .channel-grid-wrapper::-webkit-scrollbar,
-        .sidebar::-webkit-scrollbar,
-        .sports-content::-webkit-scrollbar,
-        .playlist-list::-webkit-scrollbar,
-        .modal-box::-webkit-scrollbar {
-            width: 4px;
-        }
-        .channel-grid-wrapper::-webkit-scrollbar-track,
-        .sidebar::-webkit-scrollbar-track,
-        .sports-content::-webkit-scrollbar-track,
-        .playlist-list::-webkit-scrollbar-track,
-        .modal-box::-webkit-scrollbar-track {
-            background: #0a0a15;
-        }
-        .channel-grid-wrapper::-webkit-scrollbar-thumb,
-        .sidebar::-webkit-scrollbar-thumb,
-        .sports-content::-webkit-scrollbar-thumb,
-        .playlist-list::-webkit-scrollbar-thumb,
-        .modal-box::-webkit-scrollbar-thumb {
-            background: #e94560;
-            border-radius: 10px;
+        @media (max-width: 600px) {
+            .channel-section { height: 38vh; }
+            .video-wrapper { max-height: 28vh; }
+            .channel-grid.grid-view { grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)); }
+            .channel-grid.card-view { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
+            .channel-grid.tile-view { grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); }
+            .channel-item .ch-name { font-size: 0.6rem; }
+            .channel-item img { width: 14px; height: 14px; }
+            .channel-grid.card-view .channel-item img { width: 36px; height: 36px; }
+            .status-bar .channel-info .ch-name { max-width: 30%; }
+            .search-bar input { font-size: 0.6rem; padding: 2px 8px; }
+            .search-bar .search-btn { font-size: 0.6rem; padding: 2px 10px; }
+            .header-title { font-size: 1rem; }
+            .header-title .sub { display: none; }
+            .header-center .clock { font-size: 0.9rem; }
+            .header-center .date { font-size: 0.7rem; }
+            .header-left .logo-img { width: 18px; height: 18px; }
+            .menu-btn { font-size: 20px; }
+            .status-badge { font-size: 0.5rem; padding: 2px 6px; }
+            .sidebar { padding: 10px 12px 50px; }
+            .sidebar .section-title { font-size: 0.8rem; }
+            .sidebar label { font-size: 0.7rem; }
+            .sidebar input { font-size: 0.7rem; padding: 5px 8px; }
+            .sidebar .btn { font-size: 0.7rem; padding: 4px 8px; }
+            .sidebar .btn-sm { font-size: 0.6rem; padding: 3px 6px; }
+            .toast-container { max-width: 240px; bottom: 50px; }
+            .footer .dmca-footer { font-size: 0.4rem; }
+            .notif-panel { width: 280px; right: -280px; }
+            .search-bar { order: 0; border-bottom: 1px solid #1a1a30; border-top: none; }
+            .modal-box { padding: 16px 18px; max-width: 95vw; }
+            .modal-box .modal-title { font-size: 1.2rem; }
+            .modal-box .modal-body { font-size: 0.9rem; }
         }
 
-        /* ===== রেসপন্সিভ ===== */
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 340px;
-                left: -340px;
-                padding-bottom: 60px;
-            }
-            .channel-grid.grid-view {
-                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            }
-            .channel-grid.card-view {
-                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-            }
-            .header-title {
-                font-size: 0.85rem;
-            }
-            .tab-bar button {
-                font-size: 0.55rem;
-                padding: 2px 8px;
-            }
-            .status-bar .channel-info {
-                font-size: 0.75rem;
-            }
-            .status-bar .nav-arrow {
-                font-size: 0.65rem;
-                padding: 3px 10px;
-            }
-            .sports-content {
-                max-height: 150px;
-            }
-            .modal-box {
-                padding: 18px 16px;
-                max-width: 95vw;
-            }
-            .modal-box .modal-body {
-                font-size: 0.9rem;
-            }
+        @media (max-width: 400px) {
+            .channel-grid.grid-view { grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); }
+            .channel-grid.card-view { grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)); }
+            .channel-grid.tile-view { grid-template-columns: repeat(auto-fill, minmax(50px, 1fr)); }
+            .channel-item .ch-name { font-size: 0.5rem; }
+            .channel-grid.card-view .channel-item img { width: 30px; height: 30px; }
+            .status-bar .channel-info .ch-name { max-width: 25%; }
         }
-        @media (max-width: 480px) {
-            .sidebar {
-                width: 290px;
-                left: -290px;
-            }
-            .channel-grid.grid-view {
-                grid-template-columns: repeat(auto-fill, minmax(95px, 1fr));
-            }
-            .channel-grid.card-view {
-                grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-            }
-            .channel-item .ch-name {
-                font-size: 0.6rem;
-            }
-            .channel-item img {
-                width: 16px;
-                height: 16px;
-            }
-            .status-bar .channel-info .ch-name {
-                max-width: 40%;
-            }
-            .search-bar input {
-                font-size: 0.6rem;
-            }
-            .channel-grid.card-view .channel-item img {
-                width: 36px;
-                height: 36px;
-            }
-            .modal-box .modal-title {
-                font-size: 1.1rem;
-            }
-            .modal-box .modal-body {
-                font-size: 0.85rem;
-            }
-        }
+
         @media (min-width: 1200px) {
-            .channel-grid.grid-view {
-                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            }
-            .channel-grid.card-view {
-                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            }
-            .video-wrapper {
-                max-height: 55vh;
-            }
-            .modal-box {
-                max-width: 600px;
-            }
-        }
-
-        .equalizer.paused .bar {
-            animation: none;
-            height: 4px;
-            opacity: 0.2;
+            .channel-grid.grid-view { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+            .channel-grid.card-view { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+            .video-wrapper { max-height: 62vh; }
+            .channel-section .tab-bar button { font-size: 1rem; padding: 4px 18px; }
+            .status-bar .nav-arrow { font-size: 1.2rem; padding: 4px 22px; }
+            .status-bar .channel-info { font-size: 1.3rem; }
+            .header-title { font-size: 1.6rem; }
+            .sidebar .section-title { font-size: 0.95rem; }
         }
     </style>
 </head>
 <body>
 
-    <!-- ===== নোটিফিকেশন টোস্ট কন্টেইনার ===== -->
+    <!-- ===== NOTIFICATION PANEL ===== -->
+    <div class="notif-panel" id="notifPanel">
+        <button class="close-btn" id="notifClose">✕</button>
+        <h3>🔔 বিজ্ঞপ্তি</h3>
+        <div id="notifList"><div class="notif-item">কোনো বিজ্ঞপ্তি নেই</div></div>
+    </div>
+
+    <!-- ===== TOAST CONTAINER ===== -->
     <div class="toast-container" id="toastContainer"></div>
 
-    <!-- ===== About মোডাল ===== -->
+    <!-- ===== ABOUT MODAL ===== -->
     <div class="modal-overlay" id="aboutModal">
         <div class="modal-box">
             <button class="modal-close" id="modalClose">✕</button>
             <div class="modal-title">ℹ️ About Student Care-CTC TV Player</div>
             <div class="modal-body">
-                <p><span class="dev">Student Care-CTC TV Player</span> – একটি আধুনিক ওয়েব-ভিত্তিক আইপিটিভি প্লেয়ার।</p>
-                <p style="margin-top:8px;"><b>📺 বৈশিষ্ট্যসমূহ:</b></p>
+                <p><strong>Student Care-CTC TV Player</strong> – একটি আধুনিক, পেশাদার ওয়েব-ভিত্তিক আইপিটিভি প্লেয়ার।</p>
+                <p style="margin-top:10px;"><b>📺 বৈশিষ্ট্যসমূহ:</b></p>
                 <ul class="feature-list">
-                    <li>🔑 Xtream লগইন – ইউজারনেম, পাসওয়ার্ড, সার্ভার দিয়ে প্লেলিস্ট লোড</li>
-                    <li>📂 M3U / M3U8 ফাইল আপলোড ও URL লোড</li>
-                    <li>📡 Free-TV IPTV ডিফল্ট প্লেলিস্ট (ওপেন সোর্স)</li>
-                    <li>📋 প্লেলিস্ট সংরক্ষণ, লোড, ডিলিট ও রিসেট</li>
-                    <li>⚡ HLS, MPEG-TS, MP4 সাপোর্ট – hls.js ও mpegts.js দিয়ে</li>
-                    <li>🎬 VLC ট্রান্সকোডার ইন্টিগ্রেশন – H.265/MPEG-2 সাপোর্ট</li>
-                    <li>🏷️ স্বয়ংক্রিয় ক্যাটাগোরাইজেশন – Sports, News, Entertainment, Music, Kids</li>
-                    <li>⚽ ডায়নামিক স্পোর্টস শিডিউল – আজকের, আগামীকালের ম্যাচ সহ</li>
-                    <li>📱 মোবাইল, ট্যাব, টিভি – সব ডিভাইসে রেসপন্সিভ</li>
-                    <li>🔄 থ্রি ভিউ মোড – গ্রিড, লিস্ট, কার্ড</li>
-                    <li>✅ চ্যানেল স্ট্যাটাস – Working (✅) / VLC Needed (⚠️) – সঠিকভাবে নির্ণয়</li>
-                    <li>◀ ▶ চ্যানেল নেভিগেশন (Prev/Next) ও কিবোর্ড শর্টকাট (← →)</li>
-                    <li>🔍 চ্যানেল সার্চ – <kbd>/</kbd> ফোকাস, <kbd>Enter</kbd> সার্চ</li>
-                    <li>🔔 নোটিফিকেশন – ম্যাচ শুরু ও প্লেলিস্ট আপডেটের জন্য</li>
+                    <li>🔑 <b>Xtream লগইন</b> – ইউজারনেম, পাসওয়ার্ড, সার্ভার দিয়ে প্লেলিস্ট লোড</li>
+                    <li>📂 <b>M3U / M3U8 ফাইল আপলোড ও URL লোড</b> – CORS প্রক্সি সমর্থন</li>
+                    <li>📡 <b>Toffee লাইভ স্ট্রিম</b> – অটো-আপডেট JSON থেকে চ্যানেল লোড</li>
+                    <li>🌍 <b>YuppTV FAST</b> – ওয়েবসাইটে রিডাইরেক্ট</li>
+                    <li>📋 <b>প্লেলিস্ট ম্যানেজমেন্ট</b> – সংরক্ষণ, লোড, ডিলিট ও রিসেট</li>
+                    <li>⚡ <b>HLS, MPEG-TS, MP4 সাপোর্ট</b> – hls.js ও mpegts.js দিয়ে</li>
+                    <li>🎬 <b>VLC ট্রান্সকোডার ইন্টিগ্রেশন</b> – H.265/MPEG-2 সাপোর্ট (VLC-প্রথম স্ট্র্যাটেজি)</li>
+                    <li>🏷️ <b>স্বয়ংক্রিয় ক্যাটাগোরাইজেশন</b> – Sports, News, Entertainment, Music, Kids</li>
+                    <li>🔄 <b>চারটি ভিউ মোড</b> – গ্রিড, লিস্ট, কার্ড, টাইল (ডিফল্ট: কার্ড)</li>
+                    <li>✅ <b>চ্যানেল স্ট্যাটাস</b> – চলছে / চলছে না</li>
+                    <li>◀ ▶ <b>চ্যানেল নেভিগেশন</b> – Prev/Next বাটন ও কিবোর্ড শর্টকাট</li>
+                    <li>🔍 <b>চ্যানেল সার্চ</b> – <kbd>/</kbd> ফোকাস, <kbd>Enter</kbd> সার্চ</li>
+                    <li>🔔 <b>নোটিফিকেশন</b> – টোস্ট ও নোটিফিকেশন প্যানেল</li>
+                    <li>🌐 <b>বিল্ট-ইন VPN/প্রক্সি</b> – ব্লক বাইপাসের জন্য</li>
+                    <li>📌 <b>EXTVLCOPT সাপোর্ট</b> – Referer, User-Agent, Cookie ইত্যাদি হেডার পাঠানো</li>
+                    <li>📺 <b>Picture-in-Picture (PiP) মোড</b> – আলাদা উইন্ডোতে ভিডিও দেখুন</li>
+                    <li>⚡ <b>প্লেব্যাক স্পিড কন্ট্রোল</b> – ০.৫x থেকে ২x পর্যন্ত</li>
                 </ul>
-                <p style="margin-top:10px;">
-                    <b>ডেভেলপার:</b> <span class="dev">Md Jahangir Alam</span><br />
-                    ZARA IT ZONE &amp; Student Care, Moulvibazar-3200<br />
-                    📱 <a href="https://t.me/iammrjahangir" target="_blank">Telegram</a> &bull;
-                    📘 <a href="https://www.facebook.com/MrJahangir007" target="_blank">Facebook</a> &bull;
-                    ✉️ <a href="mailto:mrjahangir007@gmail.com">Email</a>
-                </p>
-                <p style="margin-top:6px; font-size:0.7rem; color:#555;">&copy; 2026 Student Care-CTC TV Player | সর্বস্বত্ব সংরক্ষিত</p>
+                <div class="dev-details">
+                    <strong>👨‍💻 ডেভেলপার:</strong> Md Jahangir Alam<br />
+                    <strong>🏢 প্রতিষ্ঠান:</strong> ZARA IT ZONE &amp; Student Care, Moulvibazar-3200<br />
+                    <strong>📱 যোগাযোগ:</strong> <a href="https://t.me/iammrjahangir" target="_blank">Telegram</a> &bull; <a href="https://www.facebook.com/MrJahangir007" target="_blank">Facebook</a>
+                </div>
+                <div class="dmca-modal">
+                    <strong>⚠️ DMCA &amp; Copyright Notice:</strong><br />
+                    This player does not host or store any content. All TV channels and streams are sourced from free third-party public domains. We are a free aggregator and do not claim ownership of any content. If you are the rightful owner and want your content removed, please contact us.
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- ===== ওভারলে ===== -->
-    <div class="overlay" id="overlay"></div>
-
-    <!-- ===== সাইডবার ===== -->
+    <!-- ===== SIDEBAR ===== -->
     <div class="sidebar" id="sidebar">
         <button class="close-btn" id="closeSidebar">✕</button>
 
         <!-- Xtream -->
         <div class="section">
-            <div class="section-title"><span class="icon">🔑</span> Xtream লগইন</div>
+            <div class="section-title">🔑 Xtream লগইন</div>
             <input type="text" id="xtreamServer" placeholder="http://server:port" />
             <input type="text" id="xtreamUser" placeholder="ইউজারনেম" />
             <input type="password" id="xtreamPass" placeholder="পাসওয়ার্ড" />
-            <button class="btn" id="xtreamLoginBtn">লোড করুন</button>
-            <div id="xtreamStatus" style="font-size:0.7rem; color:#888; margin-top:4px;"></div>
+            <button class="btn" id="xtreamLoginBtn">লোড</button>
+            <div id="xtreamStatus" style="font-size:0.7rem; color:#888; margin-top:3px;"></div>
         </div>
 
-        <!-- প্লেলিস্ট -->
+        <!-- Playlist -->
         <div class="section">
-            <div class="section-title"><span class="icon">📂</span> প্লেলিস্ট ম্যানেজমেন্ট</div>
-            <label>M3U / M3U8 ফাইল আপলোড</label>
+            <div class="section-title">📂 প্লেলিস্ট</div>
+            <div class="btn-group">
+                <button class="btn btn-sm btn-secondary" id="loadFreeTVBtn">📡 Free IPTV</button>
+                <button class="btn btn-sm btn-secondary" id="loadJahangirBtn">📺 Jahangir-IPTV</button>
+                <button class="btn btn-sm btn-secondary" id="loadArenaBtn">📺 Arena Play</button>
+                <button class="btn btn-sm btn-secondary" id="loadLiveTVBtn">📺 Live TV</button>
+                <button class="btn btn-sm btn-secondary" id="loadShakilBtn">📺 Shakil TV</button>
+                <button class="btn btn-sm btn-secondary" id="loadMrgifyBtn">📡 Mrgify IPTV</button>
+                <button class="btn btn-sm btn-secondary" id="loadSMLiveBtn">🏏 SM Live TV</button>
+                <button class="btn btn-sm btn-secondary" id="loadLupaelBtn">📺 Lupael/IPTV-org</button>
+                <button class="btn btn-sm btn-secondary" id="loadToffeeBtn">📱 Toffee Live</button>
+                <button class="btn btn-sm btn-secondary" id="loadYuppTVBtn">🌍 YuppTV FAST</button>
+            </div>
+            <label style="margin-top:8px;">M3U ফাইল আপলোড</label>
             <input type="file" id="m3uUpload" accept=".m3u,.m3u8,.txt" />
-            <label>অথবা URL দিন</label>
+            <label>URL দিন</label>
             <div style="display:flex; gap:4px;">
-                <input type="text" id="m3uUrl" placeholder="https://example.com/playlist.m3u" style="flex:1;" />
+                <input type="text" id="m3uUrl" placeholder="http://example.com/playlist.m3u" style="flex:1;" />
                 <button class="btn btn-sm" id="loadUrlBtn">লোড</button>
             </div>
-            <button class="btn btn-secondary btn-sm" id="loadDefaultBtn" style="margin-top:4px;">📡 Free-TV IPTV লোড করুন</button>
-
-            <div style="margin-top:6px; display:flex; gap:4px; flex-wrap:wrap;">
-                <button class="btn btn-sm btn-success" id="addCurrentPlaylistBtn">➕ সংরক্ষণ করুন</button>
-                <button class="btn btn-sm btn-danger" id="resetPlaylistsBtn">🗑️ সব রিসেট</button>
-                <button class="btn btn-sm btn-about" id="aboutBtn">ℹ️ About Us</button>
+            <div id="loadStatus" class="load-status">⏳ প্রস্তুত</div>
+            <div class="btn-group" style="margin-top:6px;">
+                <button class="btn btn-sm btn-success" id="addCurrentPlaylistBtn">➕ সংরক্ষণ</button>
+                <button class="btn btn-sm btn-danger" id="resetPlaylistsBtn">🗑️ রিসেট</button>
+                <button class="btn btn-sm btn-about" id="aboutBtn">ℹ️ About</button>
             </div>
             <div class="playlist-list" id="playlistList"></div>
+            <div class="dmca-notice">
+                <strong>⚠️ DMCA:</strong> All content from third-party domains. We do not host or own any content.
+            </div>
         </div>
 
-        <!-- VLC -->
+        <!-- VLC Section -->
         <div class="section">
-            <div class="section-title"><span class="icon">⚙️</span> VLC ট্রান্সকোডার</div>
+            <div class="section-title">🎬 VLC ট্রান্সকোডার</div>
             <div class="toggle-wrap">
                 <input type="checkbox" id="vlcToggle" checked />
                 <label for="vlcToggle">সক্রিয় করুন (H.265/MPEG-2)</label>
             </div>
             <input type="url" id="vlcBackendUrl" placeholder="https://vlc-backend.onrender.com" value="https://vlc-backend-n2p1.onrender.com" />
-            <div style="font-size:0.6rem; color:#666; margin-top:2px;">✅ VLC ব্যাকএন্ড চালু আছে</div>
+            <div style="font-size:0.6rem; color:#666; margin-top:2px;">✅ VLC ব্যাকএন্ড চালু</div>
         </div>
 
-        <!-- স্পোর্টস -->
+        <!-- VPN SECTION -->
         <div class="section">
-            <div class="section-title"><span class="icon">⚽</span> ডেইলি স্পোর্টস শিডিউল 🏆</div>
-            <div class="sports-tabs">
-                <button class="active" data-sport="today">📅 Today</button>
-                <button data-sport="matches">🏏 Matches</button>
-                <button data-sport="fixtures">📋 Fixtures</button>
-                <button data-sport="results">✅ Results</button>
-                <button data-sport="standing">📊 Standing</button>
+            <div class="section-title">🌐 VPN &amp; Proxy</div>
+            <div class="vpn-section">
+                <div class="vpn-toggle">
+                    <input type="checkbox" id="vpnToggle" />
+                    <label for="vpnToggle">VPN/প্রক্সি সক্রিয় করুন</label>
+                </div>
+                <div class="vpn-status" id="vpnStatus">⏳ নিষ্ক্রিয়</div>
+                <div class="vpn-help">
+                    <strong>🔰 স্মার্ট VPN সাজেশন:</strong><br />
+                    কোনো চ্যানেল না চালালে স্বয়ংক্রিয়ভাবে VPN চালু করার পরামর্শ দেওয়া হবে।<br />
+                    <small>⚠️ কিছু স্ট্রিম স্লো হতে পারে।</small><br />
+                    <a href="#" onclick="return false;">🚀 উন্নত VPN এর জন্য <b>ProtonVPN</b> বা <b>Cloudflare WARP</b> ব্যবহার করুন।</a>
+                </div>
             </div>
-            <div class="sports-content" id="sportsContent">
-                <div id="sportsData">⏳ লোড হচ্ছে...</div>
+        </div>
+
+        <!-- Help/FAQ -->
+        <div class="section">
+            <div class="section-title">❓ সাহায্য</div>
+            <div style="font-size:0.75rem; color:#888; line-height:1.6;">
+                <p>🔹 <b>প্লেলিস্ট লোড করবেন?</b> – উপরের বাটন ক্লিক করুন অথবা URL দিন।</p>
+                <p>🔹 <b>চ্যানেল না চালালে?</b> – VPN/প্রক্সি চালু করে আবার চেষ্টা করুন।</p>
+                <p>🔹 <b>ভিউ পরিবর্তন করবেন?</b> – উপরের ⊞ ☰ ▦ ▤ বাটন ব্যবহার করুন।</p>
+                <p>🔹 <b>সার্চ করবেন?</b> – <kbd>/</kbd> চাপুন অথবা সার্চ বারে টাইপ করুন।</p>
+                <p>🔹 <b>ফুলস্ক্রিন?</b> – ভিডিওতে ডাবল ক্লিক করুন।</p>
             </div>
         </div>
     </div>
 
-    <!-- ===== হেডার ===== -->
+    <!-- ===== HEADER ===== -->
     <header class="header">
         <div class="header-left">
             <button class="menu-btn" id="menuBtn">☰</button>
-            <div class="header-title">
-                Student Care-<span>CTC</span> TV
-                <span class="sub">IPTV Player</span>
-            </div>
+            <img class="logo-img" src="https://i.postimg.cc/3RWLXLS4/Studentcare-IPTV.png" alt="Logo" />
+            <div class="header-title"><span>CTC</span> TV <span class="sub">Student Care</span></div>
         </div>
-        <div class="status-badge" id="statusBadge">⚡ HTML5</div>
+        <div class="header-center">
+            <div class="clock" id="clockDisplay">12:00:00 AM</div>
+            <div class="date" id="dateDisplay">রবিবার, ১২ জুলাই ২০২৬</div>
+        </div>
+        <div class="header-right">
+            <button class="notif-btn" id="notifBtn" title="বিজ্ঞপ্তি">🔔 <span class="badge" id="notifBadge">0</span></button>
+            <button id="pipHeaderBtn" title="Picture-in-Picture">📺</button>
+            <div class="status-badge" id="statusBadge">⚡ HTML5</div>
+        </div>
     </header>
 
-    <!-- ===== মূল কন্টেন্ট ===== -->
+    <!-- ===== MAIN CONTENT ===== -->
     <div class="main-content">
-        <!-- ভিডিও -->
-        <div class="video-wrapper">
-            <video id="videoPlayer" controls playsinline autoplay></video>
-            <div class="status-msg" id="statusMsg">📺 চ্যানেলে ক্লিক করুন</div>
-        </div>
-
-        <!-- স্ট্যাটাস বার -->
-        <div class="status-bar">
-            <button class="nav-arrow" id="prevBtn">◀ Prev</button>
-            <div class="channel-info">
-                <span class="ch-name" id="nowPlayingName">—</span>
-                <span class="ch-index" id="nowPlayingIndex">০ / ০</span>
-                <div class="equalizer paused" id="equalizer">
-                    <span class="bar"></span>
-                    <span class="bar"></span>
-                    <span class="bar"></span>
-                    <span class="bar"></span>
-                    <span class="bar"></span>
+        <!-- VIDEO SECTION -->
+        <div class="video-section">
+            <div class="video-wrapper" id="videoWrapper">
+                <video id="videoPlayer" playsinline></video>
+                <div class="custom-controls" id="customControls">
+                    <button id="playPauseBtn">▶</button>
+                    <div class="progress-bar" id="progressBar">
+                        <div class="fill" id="progressFill"></div>
+                    </div>
+                    <span class="time-display" id="timeDisplay">0:00 / 0:00</span>
+                    <input type="range" class="volume-slider" id="volumeSlider" min="0" max="1" step="0.05" value="0.8" />
+                    <button id="fullscreenBtn">⛶</button>
+                    <!-- 3-Dot Menu -->
+                    <div class="three-dot-menu" id="threeDotMenu">
+                        <button id="threeDotBtn">⋮</button>
+                        <div class="dropdown" id="threeDotDropdown">
+                            <div class="dropdown-item" id="pipMenuItem">
+                                <span class="icon">📺</span> Picture-in-Picture
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <div class="dropdown-item" style="font-size:0.7rem; color:#888; padding:4px 14px;">
+                                ⏱️ প্লেব্যাক স্পিড
+                            </div>
+                            <div class="speed-options" id="speedOptions">
+                                <button class="speed-btn" data-speed="0.5">0.5x</button>
+                                <button class="speed-btn" data-speed="0.75">0.75x</button>
+                                <button class="speed-btn active" data-speed="1">1x</button>
+                                <button class="speed-btn" data-speed="1.25">1.25x</button>
+                                <button class="speed-btn" data-speed="1.5">1.5x</button>
+                                <button class="speed-btn" data-speed="2">2x</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="status-msg" id="statusMsg">
+                    <span class="close-msg" id="closeStatusMsg">✕</span>📺 চ্যানেলে ক্লিক করুন
                 </div>
             </div>
-            <button class="nav-arrow" id="nextBtn">Next ▶</button>
+            <div class="status-bar">
+                <button class="nav-arrow" id="prevBtn">◀ Prev</button>
+                <div class="channel-info">
+                    <span class="ch-name" id="nowPlayingName">—</span>
+                    <span class="ch-index" id="nowPlayingIndex">০ / ০</span>
+                    <div class="equalizer paused" id="equalizer">
+                        <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+                        <span class="bar"></span><span class="bar"></span>
+                    </div>
+                </div>
+                <button class="nav-arrow" id="nextBtn">Next ▶</button>
+            </div>
         </div>
 
-        <!-- চ্যানেল এরিয়া -->
-        <div class="channel-area">
-            <div class="channel-toolbar">
+        <!-- CHANNEL SECTION -->
+        <div class="channel-section">
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="🔍 চ্যানেল খুঁজুন..." />
+                <button class="search-btn" id="searchBtn">Go</button>
+                <span class="key-hint"><kbd>/</kbd> ফোকাস</span>
+            </div>
+
+            <div class="channel-toolbar-top">
                 <div class="tab-bar" id="tabBar"></div>
                 <div class="view-toggle">
-                    <button class="active" data-view="grid" title="গ্রিড ভিউ">⊞</button>
-                    <button data-view="list" title="লিস্ট ভিউ">☰</button>
-                    <button data-view="card" title="কার্ড ভিউ">▦</button>
+                    <button data-view="grid" title="গ্রিড">⊞</button>
+                    <button data-view="list" title="লিস্ট">☰</button>
+                    <button class="active" data-view="card" title="কার্ড">▦</button>
+                    <button data-view="tile" title="টাইল">▤</button>
                 </div>
             </div>
             <div class="channel-grid-wrapper">
-                <div class="channel-grid grid-view" id="channelGrid"></div>
+                <div class="channel-grid card-view" id="channelGrid"></div>
             </div>
         </div>
-
-        <!-- সার্চ বার -->
-        <div class="search-bar">
-            <input type="text" id="searchInput" placeholder="🔍 চ্যানেল খুঁজুন..." />
-            <button class="search-btn" id="searchBtn">Go</button>
-            <span class="key-hint"><kbd>/</kbd> ফোকাস</span>
-        </div>
     </div>
 
-    <!-- ফুটার -->
+    <!-- ===== FOOTER ===== -->
     <div class="footer">
-        Developed by <span>Md Jahangir Alam</span> &bull;
-        <a href="https://t.me/iammrjahangir" target="_blank" style="color:#e94560;text-decoration:none;">Telegram</a> &bull;
-        <a href="https://www.facebook.com/MrJahangir007" target="_blank" style="color:#e94560;text-decoration:none;">Facebook</a>
+        <div>Developed by <span>Md Jahangir Alam</span> &bull; <a href="https://t.me/iammrjahangir" target="_blank">Telegram</a> &bull; <a href="https://www.facebook.com/MrJahangir007" target="_blank">Facebook</a></div>
+        <div class="dev-footer">ZARA IT ZONE &amp; Student Care, Moulvibazar-3200</div>
+        <div class="dmca-footer">⚠️ DMCA: All content from third-party domains. We do not host or own any content.</div>
     </div>
 
-    <!-- ===== জাভাস্ক্রিপ্ট ===== -->
     <script>
         (function() {
             'use strict';
 
-            // ===== DOM =====
+            // ===== CORS Proxy =====
+            const CORS_PROXY = 'https://api.allorigins.win/raw?url=';
+            const PROXY_ALT = 'https://corsproxy.io/?';
+
+            // ===== Playlist URLs =====
+            const PLAYLISTS = {
+                freetv: 'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlist.m3u8',
+                jahangir: 'https://raw.githubusercontent.com/MrJahangir007/Jahangir-iptv/main/playlist.m3u8',
+                arena: 'https://siamahmeed563-lab.github.io/Siam-areana/playlist.m3u',
+                livetv: 'https://raw.githubusercontent.com/20hridoy3/HRIDOY-TV-NETWORK/main/HRIDOY-TV.m3u',
+                shakil: 'https://raw.githubusercontent.com/imShakil/tvlink/refs/heads/main/iptv.m3u8',
+                mrgify: 'https://raw.githubusercontent.com/abusaeeidx/IPTV-Scraper-Zilla/main/combined-playlist.m3u',
+                smlive: 'https://raw.githubusercontent.com/sm-monirulislam/SM-Live-TV/refs/heads/main/Combined_Live_TV.m3u',
+                lupael: 'https://iptv-org.github.io/iptv/index.m3u',
+                toffee: 'https://raw.githubusercontent.com/Gtajisan/Toffee-Auto-Update-Playlist/main/toffee_channel_data.json',
+                yupptv: 'https://www.yupptv.com/fast-tv?genreCode=all'
+            };
+
+            // ===== DOM refs =====
             const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
             const menuBtn = document.getElementById('menuBtn');
             const closeSidebar = document.getElementById('closeSidebar');
-
             const fileInput = document.getElementById('m3uUpload');
             const urlInput = document.getElementById('m3uUrl');
             const loadUrlBtn = document.getElementById('loadUrlBtn');
-            const loadDefaultBtn = document.getElementById('loadDefaultBtn');
+            const loadFreeTVBtn = document.getElementById('loadFreeTVBtn');
+            const loadJahangirBtn = document.getElementById('loadJahangirBtn');
+            const loadArenaBtn = document.getElementById('loadArenaBtn');
+            const loadLiveTVBtn = document.getElementById('loadLiveTVBtn');
+            const loadShakilBtn = document.getElementById('loadShakilBtn');
+            const loadMrgifyBtn = document.getElementById('loadMrgifyBtn');
+            const loadSMLiveBtn = document.getElementById('loadSMLiveBtn');
+            const loadLupaelBtn = document.getElementById('loadLupaelBtn');
+            const loadToffeeBtn = document.getElementById('loadToffeeBtn');
+            const loadYuppTVBtn = document.getElementById('loadYuppTVBtn');
             const addCurrentBtn = document.getElementById('addCurrentPlaylistBtn');
             const resetPlaylistsBtn = document.getElementById('resetPlaylistsBtn');
             const playlistListEl = document.getElementById('playlistList');
-
+            const loadStatus = document.getElementById('loadStatus');
             const xtreamServer = document.getElementById('xtreamServer');
             const xtreamUser = document.getElementById('xtreamUser');
             const xtreamPass = document.getElementById('xtreamPass');
             const xtreamLoginBtn = document.getElementById('xtreamLoginBtn');
             const xtreamStatus = document.getElementById('xtreamStatus');
-
             const vlcToggle = document.getElementById('vlcToggle');
             const vlcBackendUrl = document.getElementById('vlcBackendUrl');
-
             const video = document.getElementById('videoPlayer');
+            const videoWrapper = document.getElementById('videoWrapper');
             const statusMsg = document.getElementById('statusMsg');
+            const closeStatusMsg = document.getElementById('closeStatusMsg');
             const statusBadge = document.getElementById('statusBadge');
             const channelGrid = document.getElementById('channelGrid');
             const tabBar = document.getElementById('tabBar');
@@ -1202,43 +1377,87 @@
             const searchInput = document.getElementById('searchInput');
             const searchBtn = document.getElementById('searchBtn');
             const equalizer = document.getElementById('equalizer');
-
             const aboutBtn = document.getElementById('aboutBtn');
             const aboutModal = document.getElementById('aboutModal');
             const modalClose = document.getElementById('modalClose');
+            const notifBtn = document.getElementById('notifBtn');
+            const notifPanel = document.getElementById('notifPanel');
+            const notifClose = document.getElementById('notifClose');
+            const notifList = document.getElementById('notifList');
+            const notifBadge = document.getElementById('notifBadge');
+            const clockDisplay = document.getElementById('clockDisplay');
+            const dateDisplay = document.getElementById('dateDisplay');
+            const vpnToggle = document.getElementById('vpnToggle');
+            const vpnStatus = document.getElementById('vpnStatus');
+            const playPauseBtn = document.getElementById('playPauseBtn');
+            const progressBar = document.getElementById('progressBar');
+            const progressFill = document.getElementById('progressFill');
+            const timeDisplay = document.getElementById('timeDisplay');
+            const volumeSlider = document.getElementById('volumeSlider');
+            const fullscreenBtn = document.getElementById('fullscreenBtn');
+            const pipHeaderBtn = document.getElementById('pipHeaderBtn');
+            const threeDotBtn = document.getElementById('threeDotBtn');
+            const threeDotDropdown = document.getElementById('threeDotDropdown');
+            const pipMenuItem = document.getElementById('pipMenuItem');
+            const speedOptions = document.getElementById('speedOptions');
 
-            // ===== স্টেট =====
+            // ===== Clock =====
+            function updateClock() {
+                const now = new Date();
+                let hours = now.getHours();
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const seconds = String(now.getSeconds()).padStart(2, '0');
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12 || 12;
+                clockDisplay.textContent = `${hours}:${minutes}:${seconds} ${ampm}`;
+                const days = ['রবিবার','সোমবার','মঙ্গলবার','বুধবার','বৃহস্পতিবার','শুক্রবার','শনিবার'];
+                const months = ['জানুয়ারি','ফেব্রুয়ারি','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্টেম্বর','অক্টোবর','নভেম্বর','ডিসেম্বর'];
+                const dayName = days[now.getDay()];
+                const day = now.getDate();
+                const month = months[now.getMonth()];
+                const year = now.getFullYear();
+                dateDisplay.textContent = `${dayName}, ${day} ${month} ${year}`;
+            }
+            updateClock();
+            setInterval(updateClock, 1000);
+
+            // ===== State =====
             let allChannels = [];
             let currentIndex = 0;
             let currentTab = 'All';
             let currentHls = null;
             let currentMpegts = null;
             let searchQuery = '';
-            let vlcRetryCount = 0;
             let playlists = [];
-            let currentView = 'grid';
+            let currentView = 'card';
+            let notifications = [];
+            let isVpnEnabled = false;
+            let vpnSuggested = false;
             let vlcBackendHealthy = false;
+            let currentSpeed = 1;
 
-            // ===== সাইডবার =====
-            function toggleSidebar(open) {
-                sidebar.classList.toggle('open', open);
-                overlay.classList.toggle('active', open);
+            // ===== Notifications =====
+            function addNotification(title, message) {
+                const now = new Date();
+                const timeStr = now.toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit' });
+                notifications.unshift({ title, message, time: timeStr });
+                if (notifications.length > 50) notifications.pop();
+                renderNotifications();
+                showToast(title, message);
+                notifBadge.textContent = notifications.length;
             }
-            menuBtn.addEventListener('click', () => toggleSidebar(true));
-            closeSidebar.addEventListener('click', () => toggleSidebar(false));
-            overlay.addEventListener('click', () => toggleSidebar(false));
 
-            // ===== মোডাল =====
-            function openModal() { aboutModal.classList.add('active'); }
+            function renderNotifications() {
+                if (notifications.length === 0) {
+                    notifList.innerHTML = `<div class="notif-item">কোনো বিজ্ঞপ্তি নেই</div>`;
+                    return;
+                }
+                notifList.innerHTML = notifications.map(n =>
+                    `<div class="notif-item"><span class="title">${n.title}</span> ${n.message} <span class="time">${n.time}</span></div>`
+                ).join('');
+            }
 
-            function closeModal() { aboutModal.classList.remove('active'); }
-            aboutBtn.addEventListener('click', openModal);
-            modalClose.addEventListener('click', closeModal);
-            aboutModal.addEventListener('click', (e) => { if (e.target === aboutModal) closeModal(); });
-            document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
-
-            // ===== নোটিফিকেশন টোস্ট =====
-            function showToast(title, message, duration = 6000) {
+            function showToast(title, message, duration = 5000) {
                 const container = document.getElementById('toastContainer');
                 const toast = document.createElement('div');
                 toast.className = 'toast';
@@ -1247,609 +1466,68 @@
                     <div class="toast-title">${title}</div>
                     <div>${message}</div>
                 `;
-                toast.querySelector('.toast-close').addEventListener('click', () => {
-                    toast.remove();
-                });
+                toast.querySelector('.toast-close').addEventListener('click', () => toast.remove());
                 container.appendChild(toast);
-                if (duration > 0) {
-                    setTimeout(() => {
-                        toast.remove();
-                    }, duration);
-                }
+                if (duration > 0) setTimeout(() => toast.remove(), duration);
             }
 
-            // ===== ডায়নামিক স্পোর্টস ডেটা (আজকের, আগামীকালের) =====
-            function getMatchesForDate(date) {
-                // date: Date object
-                const day = date.getDate();
-                const month = date.getMonth() + 1;
-                const year = date.getFullYear();
-                const dateStr = `${day}/${month}/${year}`;
-                // আমরা কিছু ফিক্সড ডেটা তৈরি করি যা তারিখের উপর ভিত্তি করে পরিবর্তিত হয়
-                // FIFA WC 2026 - প্রতিদিন আলাদা ম্যাচ
-                const fifaMatches = [
-                    { team1: 'USA', team2: 'Paraguay', time: '6:00 PM', venue: 'Los Angeles', group: 'Group A' },
-                    { team1: 'Mexico', team2: 'Canada', time: '9:00 PM', venue: 'Mexico City', group: 'Group A' },
-                    { team1: 'Brazil', team2: 'Portugal', time: '7:00 PM', venue: 'Miami', group: 'Group B' },
-                    { team1: 'Argentina', team2: 'Nigeria', time: '10:00 PM', venue: 'Atlanta', group: 'Group C' },
-                    { team1: 'England', team2: 'Germany', time: '8:00 PM', venue: 'New York', group: 'Group D' },
-                    { team1: 'France', team2: 'Spain', time: '7:30 PM', venue: 'Houston', group: 'Group E' },
-                    { team1: 'Italy', team2: 'Netherlands', time: '9:30 PM', venue: 'Dallas', group: 'Group F' },
-                    { team1: 'Belgium', team2: 'Croatia', time: '6:30 PM', venue: 'Kansas City', group: 'Group G' },
-                ];
-                // ডেট অফসেট অনুযায়ী কিছু ম্যাচ বেছে নেওয়া (প্রতিদিন ২-৩টি)
-                const offset = (day + month) % 5; // 0-4
-                const selected = fifaMatches.slice(offset * 2, offset * 2 + 2);
-                if (selected.length < 2) {
-                    // যদি কম হয়, আরও যোগ করি
-                    selected.push(fifaMatches[0], fifaMatches[1]);
-                }
-                const fifa = selected.map(m => ({
-                    league: 'FIFA WC 2026',
-                    team1: m.team1,
-                    team2: m.team2,
-                    time: m.time,
-                    venue: m.venue,
-                    group: m.group
-                }));
-
-                // ফুটবল লীগ – প্রতিদিন কিছু ম্যাচ
-                const football = [
-                    { league: 'EPL', team1: 'Manchester United', team2: 'Liverpool', time: '8:30 PM',
-                    venue: 'Old Trafford' },
-                    { league: 'La Liga', team1: 'Real Madrid', team2: 'Barcelona', time: '10:00 PM',
-                    venue: 'Bernabeu' },
-                    { league: 'Bundesliga', team1: 'Bayern Munich', team2: 'Dortmund', time: '7:30 PM',
-                        venue: 'Allianz Arena' },
-                    { league: 'EPL', team1: 'Arsenal', team2: 'Chelsea', time: '6:30 PM', venue: 'Emirates' },
-                ];
-                // ডেট অফসেট অনুযায়ী ২টি
-                const off2 = (day + month + 3) % 4;
-                const foot = football.slice(off2, off2 + 2);
-                if (foot.length < 2) foot.push(football[0]);
-
-                // ক্রিকেট
-                const cricket = [
-                    { league: 'IPL', team1: 'Mumbai Indians', team2: 'Chennai Super Kings', time: '8:00 PM',
-                        venue: 'Wankhede' },
-                    { league: 'BPL', team1: 'Comilla Victorians', team2: 'Fortune Barishal', time: '7:00 PM',
-                        venue: 'Mirpur' },
-                    { league: 'IPL', team1: 'Royal Challengers', team2: 'Kolkata Knight Riders', time: '4:00 PM',
-                        venue: 'Chinnaswamy' },
-                ];
-                const off3 = (day + month + 5) % 3;
-                const cri = cricket.slice(off3, off3 + 1);
-                if (cri.length < 1) cri.push(cricket[0]);
-
-                // লোকাল
-                const local = [
-                    { league: 'Local Cup', team1: 'Mohammedan SC', team2: 'Abahani Ltd', time: '5:00 PM',
-                        venue: 'Bashundhara' },
-                    { league: 'Local Cup', team1: 'Sheikh Russel', team2: 'Uttar Baridhara', time: '3:00 PM',
-                        venue: 'Kamalapur' },
-                ];
-                const off4 = (day + month + 7) % 2;
-                const loc = local.slice(off4, off4 + 1);
-                if (loc.length < 1) loc.push(local[0]);
-
-                return [...fifa, ...foot, ...cri, ...loc];
-            }
-
-            function getSportsData(tab) {
-                const today = new Date();
-                const tomorrow = new Date(today);
-                tomorrow.setDate(today.getDate() + 1);
-                const dateStrToday = today.toLocaleDateString('bn-BD', { day: 'numeric', month: 'short', year: 'numeric' });
-                const dateStrTomorrow = tomorrow.toLocaleDateString('bn-BD', { day: 'numeric', month: 'short',
-                    year: 'numeric' });
-
-                let html = '';
-                if (tab === 'today') {
-                    const matches = getMatchesForDate(today);
-                    html =
-                        `<div style="font-size:0.7rem; color:#888; margin-bottom:6px;">📅 ${dateStrToday} - আজকের ম্যাচ</div>`;
-                    if (matches.length === 0) {
-                        html += `<div style="color:#555; padding:8px;">আজ কোনো ম্যাচ নেই</div>`;
-                    } else {
-                        html += `<table><tr><th>লীগ</th><th>দল</th><th>সময়</th></tr>`;
-                        matches.forEach(m => {
-                            const groupInfo = m.group ? ` (${m.group})` : '';
-                            html +=
-                                `<tr><td style="color:#ff8800;font-size:0.65rem;">${m.league}${groupInfo}</td><td class="team">${m.team1} <span class="vs">vs</span> ${m.team2}</td><td class="date">${m.time}</td></tr>`;
-                        });
-                        html += `</table>`;
-                    }
-                    // আগামীকালের জন্য প্রিভিউ
-                    const tomorrowMatches = getMatchesForDate(tomorrow);
-                    if (tomorrowMatches.length) {
-                        html +=
-                            `<div style="margin-top:8px; font-size:0.7rem; color:#888;">📅 ${dateStrTomorrow} - আগামীকালের ম্যাচ</div>`;
-                        html += `<table><tr><th>লীগ</th><th>দল</th><th>সময়</th></tr>`;
-                        tomorrowMatches.slice(0, 3).forEach(m => {
-                            const groupInfo = m.group ? ` (${m.group})` : '';
-                            html +=
-                                `<tr><td style="color:#ff8800;font-size:0.65rem;">${m.league}${groupInfo}</td><td class="team">${m.team1} <span class="vs">vs</span> ${m.team2}</td><td class="date">${m.time}</td></tr>`;
-                        });
-                        html += `</table>`;
-                    }
-                } else if (tab === 'matches') {
-                    // লাইভ
-                    const live = getMatchesForDate(today).slice(0, 3).map(m => ({
-                        league: m.league,
-                        team1: m.team1,
-                        team2: m.team2,
-                        score: Math.random() > 0.5 ? `${Math.floor(Math.random()*3)}-${Math.floor(Math.random()*2)}` :
-                            'লাইভ',
-                        status: 'লাইভ'
-                    }));
-                    html =
-                        `<div style="font-size:0.7rem; color:#888; margin-bottom:6px;">🏏 লাইভ আপডেট</div>`;
-                    html += `<table><tr><th>লীগ</th><th>দল</th><th>স্কোর</th><th>স্ট্যাটাস</th></tr>`;
-                    live.forEach(m => {
-                        html +=
-                            `<tr><td style="color:#ff8800;font-size:0.65rem;">${m.league}</td><td class="team">${m.team1} <span class="vs">vs</span> ${m.team2}</td><td class="score">${m.score}</td><td class="live">● ${m.status}</td></tr>`;
-                    });
-                    html += `</table>`;
-                    html +=
-                        `<div style="margin-top:6px; font-size:0.65rem; color:#888;">আরও আপডেট শীঘ্রই...</div>`;
-                } else if (tab === 'fixtures') {
-                    // আগামী ৩ দিনের ফিক্সচার
-                    const days = [1, 2, 3];
-                    html =
-                        `<div style="font-size:0.7rem; color:#888; margin-bottom:6px;">📋 আগামী ম্যাচসমূহ</div>`;
-                    html += `<table><tr><th>তারিখ</th><th>লীগ</th><th>দল</th><th>সময়</th></tr>`;
-                    days.forEach(offset => {
-                        const d = new Date(today);
-                        d.setDate(today.getDate() + offset);
-                        const matches = getMatchesForDate(d);
-                        matches.slice(0, 2).forEach(m => {
-                            const dateStr = d.toLocaleDateString('bn-BD', { day: 'numeric',
-                                month: 'short' });
-                            const groupInfo = m.group ? ` (${m.group})` : '';
-                            html +=
-                                `<tr><td class="date">${dateStr}</td><td style="color:#ff8800;font-size:0.65rem;">${m.league}${groupInfo}</td><td class="team">${m.team1} <span class="vs">vs</span> ${m.team2}</td><td class="date">${m.time}</td></tr>`;
-                        });
-                    });
-                    html += `</table>`;
-                } else if (tab === 'results') {
-                    // গতকালের ফলাফল
-                    const yesterday = new Date(today);
-                    yesterday.setDate(today.getDate() - 1);
-                    const matches = getMatchesForDate(yesterday).slice(0, 3);
-                    html =
-                        `<div style="font-size:0.7rem; color:#888; margin-bottom:6px;">✅ সম্পন্ন ফলাফল (${yesterday.toLocaleDateString('bn-BD',{day:'numeric',month:'short'})})</div>`;
-                    html += `<table><tr><th>লীগ</th><th>দল</th><th>ফলাফল</th></tr>`;
-                    matches.forEach(m => {
-                        const score = `${Math.floor(Math.random()*3)}-${Math.floor(Math.random()*2)}`;
-                        const groupInfo = m.group ? ` (${m.group})` : '';
-                        html +=
-                            `<tr><td style="color:#ff8800;font-size:0.65rem;">${m.league}${groupInfo}</td><td class="team">${m.team1} <span class="vs">vs</span> ${m.team2}</td><td class="score">${score}</td></tr>`;
-                    });
-                    html += `</table>`;
-                } else if (tab === 'standing') {
-                    // স্ট্যান্ডিং (মিশ্র)
-                    const standings = [
-                        { league: 'FIFA WC 2026', team: 'Argentina', pts: '9', pl: '3', gd: '+5' },
-                        { league: 'FIFA WC 2026', team: 'France', pts: '7', pl: '3', gd: '+4' },
-                        { league: 'EPL', team: 'Liverpool', pts: '45', pl: '18', gd: '+28' },
-                        { league: 'EPL', team: 'Manchester City', pts: '43', pl: '18', gd: '+24' },
-                        { league: 'IPL', team: 'Mumbai Indians', pts: '16', pl: '12', gd: '+2' },
-                        { league: 'BPL', team: 'Comilla Victorians', pts: '12', pl: '8', gd: '+3' },
-                        { league: 'Local Cup', team: 'Mohammedan SC', pts: '9', pl: '5', gd: '+5' },
-                    ];
-                    html =
-                        `<div style="font-size:0.7rem; color:#888; margin-bottom:6px;">📊 পয়েন্ট টেবিল</div>`;
-                    html += `<table><tr><th>লীগ</th><th>টিম</th><th>পয়েন্ট</th><th>ম্যাচ</th><th>GD</th></tr>`;
-                    standings.forEach(m => {
-                        html +=
-                            `<tr><td style="color:#ff8800;font-size:0.65rem;">${m.league}</td><td class="team">${m.team}</td><td>${m.pts}</td><td>${m.pl}</td><td>${m.gd}</td></tr>`;
-                    });
-                    html += `</table>`;
-                }
-                return html;
-            }
-
-            function updateSports() {
-                const active = document.querySelector('.sports-tabs .active');
-                const tab = active ? active.dataset.sport : 'today';
-                document.getElementById('sportsData').innerHTML = getSportsData(tab);
-                // চেক করুন আজকের ম্যাচ শুরু হতে পারে – নোটিফিকেশন
-                if (tab === 'today') {
-                    const matches = getMatchesForDate(new Date());
-                    const now = new Date();
-                    const hour = now.getHours();
-                    const min = now.getMinutes();
-                    matches.forEach(m => {
-                        const t = m.time;
-                        if (t) {
-                            let [h, p] = t.split(':');
-                            let hr = parseInt(h);
-                            const period = p ? p.trim().slice(-2) : '';
-                            if (period === 'PM' && hr < 12) hr += 12;
-                            if (period === 'AM' && hr === 12) hr = 0;
-                            if (hr === hour || hr === hour + 1) {
-                                showToast('⚽ ম্যাচ শুরু হতে চলেছে!',
-                                    `${m.team1} vs ${m.team2} - ${m.league}`, 8000);
-                            }
-                        }
-                    });
-                }
-            }
-
-            document.querySelectorAll('.sports-tabs button').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    document.querySelectorAll('.sports-tabs button').forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    updateSports();
-                });
-            });
-            updateSports();
-
-            // ===== ভিউ টগল =====
-            document.querySelectorAll('.view-toggle button').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    document.querySelectorAll('.view-toggle button').forEach(b => b.classList.remove(
-                    'active'));
-                    this.classList.add('active');
-                    currentView = this.dataset.view;
-                    channelGrid.className = 'channel-grid';
-                    if (currentView === 'grid') channelGrid.classList.add('grid-view');
-                    else if (currentView === 'list') channelGrid.classList.add('list-view');
-                    else if (currentView === 'card') channelGrid.classList.add('card-view');
-                    renderChannels();
-                });
-            });
-
-            // ===== M3U পার্সার =====
-            function parseM3U(text) {
-                const lines = text.split(/\r?\n/);
-                const result = [];
-                let current = null;
-                for (let line of lines) {
-                    line = line.trim();
-                    if (!line) continue;
-                    if (line.startsWith('#EXTINF:')) {
-                        const logoMatch = line.match(/tvg-logo\s*=\s*"([^"]*)"/i);
-                        const nameMatch = line.match(/#EXTINF:[^,]*,(.+)/);
-                        const groupMatch = line.match(/group-title\s*=\s*"([^"]*)"/i);
-                        let name = nameMatch ? nameMatch[1].trim() : 'Unknown';
-                        let logo = logoMatch ? logoMatch[1] : '';
-                        let group = groupMatch ? groupMatch[1].trim() : '';
-                        current = { name, logo, url: '', group: group };
-                    } else if (line.startsWith('#')) {
-                        continue;
-                    } else if (current && line) {
-                        current.url = line;
-                        if (current.url) result.push(current);
-                        current = null;
+            // ===== Status message =====
+            let statusTimeout = null;
+            function showStatus(msg, autoClose = true, isVpnSuggestion = false) {
+                let vpnMsg = '';
+                if (isVpnSuggestion && !isVpnEnabled) {
+                    vpnMsg = '<br/><span style="color:#00ccff;font-size:0.75rem;">💡 VPN/প্রক্সি চালু করার চেষ্টা করুন</span>';
+                    if (!vpnSuggested) {
+                        vpnSuggested = true;
+                        addNotification('💡 VPN সাজেশন', 'চ্যানেল চালাতে VPN/প্রক্সি চালু করুন');
                     }
                 }
-                return result;
-            }
-
-            // ===== ক্যাটাগোরাইজেশন (VLC স্ট্যাটাস সঠিকভাবে) =====
-            function categorizeChannels(raw) {
-                return raw.map(ch => {
-                    let category = 'Others';
-                    const name = ch.name.toLowerCase();
-                    const group = (ch.group || '').toLowerCase();
-                    const full = name + ' ' + group;
-
-                    if (full.includes('sports') || full.includes('football') || full.includes('cricket') || full
-                        .includes('match') || full.includes('espn') || full.includes('tennis') || full.includes(
-                            'basketball') || full.includes('golf') || full.includes('nfl') || full.includes('nba') ||
-                        full.includes('ipl') || full.includes('bpl') || full.includes('epl') || full.includes(
-                        'la liga'))
-                        category = 'Sports';
-                    else if (full.includes('news') || full.includes('bbc') || full.includes('cnn') || full.includes(
-                            'al jazeera') || full.includes('nbc') || full.includes('sky news') || full.includes(
-                            'fox news') || full.includes('cnbc') || full.includes('ndtv') || full.includes('times now'))
-                        category = 'News';
-                    else if (full.includes('movie') || full.includes('entertain') || full.includes('hollywood') ||
-                        full.includes('bollywood') || full.includes('hbo') || full.includes('netflix') || full
-                        .includes('disney') || full.includes('star world') || full.includes('cinema') || full
-                        .includes('film') || full.includes('zee') || full.includes('sony'))
-                        category = 'Entertainment';
-                    else if (full.includes('music') || full.includes('mtv') || full.includes('vh1') || full.includes(
-                            'radio') || full.includes('song') || full.includes('concert') || full.includes('8tv'))
-                        category = 'Music';
-                    else if (full.includes('kids') || full.includes('cartoon') || full.includes('nick') || full
-                        .includes('disney junior') || full.includes('pogo') || full.includes('boomerang') || full
-                        .includes('cartoon network') || full.includes('chutti'))
-                        category = 'Kids';
-
-                    return {
-                        ...ch,
-                        category: category,
-                        vlcNeeded: false,
-                        played: false,
-                        vlcWorking: false // নতুন ফ্ল্যাগ
-                    };
-                });
-            }
-
-            // ===== প্লেলিস্ট ম্যানেজমেন্ট =====
-            function loadPlaylistsFromStorage() {
-                try {
-                    const data = localStorage.getItem('playlists');
-                    playlists = data ? JSON.parse(data) : [];
-                } catch (e) { playlists = []; }
-                renderPlaylistList();
-            }
-
-            function savePlaylistsToStorage() {
-                try { localStorage.setItem('playlists', JSON.stringify(playlists)); } catch (e) {}
-                renderPlaylistList();
-            }
-
-            function renderPlaylistList() {
-                playlistListEl.innerHTML = '';
-                if (!playlists.length) {
-                    playlistListEl.innerHTML =
-                        `<div style="color:#555; padding:6px; text-align:center; font-size:0.7rem;">কোনো প্লেলিস্ট নেই</div>`;
-                    return;
-                }
-                playlists.forEach((pl, idx) => {
-                    const div = document.createElement('div');
-                    div.className = 'playlist-item';
-                    const nameSpan = document.createElement('span');
-                    nameSpan.className = 'pl-name';
-                    nameSpan.textContent = pl.name || `প্লেলিস্ট ${idx+1}`;
-                    const actions = document.createElement('div');
-                    actions.className = 'pl-actions';
-                    const loadBtn = document.createElement('button');
-                    loadBtn.textContent = '📂 লোড';
-                    loadBtn.addEventListener('click', (e) => { e.stopPropagation();
-                        loadPlaylist(idx); });
-                    const delBtn = document.createElement('button');
-                    delBtn.textContent = '🗑️';
-                    delBtn.addEventListener('click', (e) => { e.stopPropagation();
-                        if (confirm(`"${pl.name}" মুছবেন?`)) { playlists.splice(idx, 1);
-                            savePlaylistsToStorage(); } });
-                    actions.appendChild(loadBtn);
-                    actions.appendChild(delBtn);
-                    div.appendChild(nameSpan);
-                    div.appendChild(actions);
-                    playlistListEl.appendChild(div);
-                });
-            }
-
-            function loadPlaylist(index) {
-                if (index < 0 || index >= playlists.length) return;
-                const pl = playlists[index];
-                if (!pl.data || !pl.data.length) { alert('প্লেলিস্ট খালি!'); return; }
-                allChannels = pl.data;
-                renderAll();
-                saveToStorage();
-                if (allChannels.length) playChannel(0);
-                toggleSidebar(false);
-                showToast('📂 প্লেলিস্ট লোড', `${pl.name} লোড করা হয়েছে`, 4000);
-            }
-
-            function addPlaylist(name, data) {
-                if (!data || !data.length) return false;
-                playlists.push({ id: Date.now() + '_' + Math.random().toString(36).substr(2, 6), name: name ||
-                        'প্লেলিস্ট', data: data });
-                savePlaylistsToStorage();
-                return true;
-            }
-
-            function addCurrentAsPlaylist() {
-                if (!allChannels.length) { alert('কোনো চ্যানেল নেই!'); return; }
-                const name = prompt('প্লেলিস্টের নাম দিন:', 'My Playlist');
-                if (name === null) return;
-                if (addPlaylist(name || 'My Playlist', allChannels)) {
-                    alert('প্লেলিস্ট সংরক্ষিত!');
-                    showToast('✅ প্লেলিস্ট সংরক্ষিত', name, 4000);
-                } else alert('সংরক্ষণ ব্যর্থ!');
-            }
-
-            function resetAllPlaylists() {
-                if (!confirm('সব প্লেলিস্ট মুছবেন?')) return;
-                playlists = [];
-                savePlaylistsToStorage();
-                allChannels = [];
-                renderAll();
-                destroyPlayers();
-                showStatus('📺 চ্যানেল সিলেক্ট করুন');
-                localStorage.removeItem('m3u_channels');
-                localStorage.removeItem('m3u_current');
-                showToast('🗑️ সব প্লেলিস্ট রিসেট', 'প্লেলিস্ট মুছে ফেলা হয়েছে', 4000);
-            }
-
-            // ===== Xtream =====
-            async function loadFromXtream() {
-                const server = xtreamServer.value.trim();
-                const user = xtreamUser.value.trim();
-                const pass = xtreamPass.value.trim();
-                if (!server || !user || !pass) { xtreamStatus.textContent = '❌ সব ফিল্ড পূরণ করুন।'; return; }
-                let base = server.replace(/\/+$/, '');
-                const url =
-                    `${base}/player_api.php?username=${encodeURIComponent(user)}&password=${encodeURIComponent(pass)}`;
-                xtreamStatus.textContent = '⏳ লোড হচ্ছে...';
-                try {
-                    const res = await fetch(url);
-                    if (!res.ok) throw new Error('Network error');
-                    const data = await res.json();
-                    if (!data.streams || !data.streams.length) throw new Error('কোনো স্ট্রিম নেই');
-                    const raw = data.streams.map(s => ({
-                        name: s.name || 'Unknown',
-                        logo: s.stream_icon || '',
-                        url: `${base}/live/${user}/${pass}/${s.stream_id}.ts`,
-                        group: s.category_name || ''
-                    }));
-                    const categorized = categorizeChannels(raw);
-                    allChannels = categorized;
-                    renderAll();
-                    saveToStorage();
-                    if (categorized.length) playChannel(0);
-                    toggleSidebar(false);
-                    xtreamStatus.textContent = '✅ লোড সম্পন্ন!';
-                    showToast('🔑 Xtream লোড', `${categorized.length}টি চ্যানেল লোড করা হয়েছে`, 4000);
-                } catch (err) {
-                    xtreamStatus.textContent = '❌ ব্যর্থ: ' + err.message;
-                }
-            }
-            xtreamLoginBtn.addEventListener('click', loadFromXtream);
-
-            // ===== ডিফল্ট =====
-            async function loadDefaultPlaylist() {
-                const url = 'https://raw.githubusercontent.com/Free-TV/IPTV/master/playlist.m3u8';
-                showStatus('⏳ Free-TV IPTV লোড হচ্ছে...');
-                try {
-                    const res = await fetch(url);
-                    if (!res.ok) throw new Error('Network error');
-                    const text = await res.text();
-                    const raw = parseM3U(text);
-                    if (!raw.length) throw new Error('কোনো চ্যানেল নেই');
-                    const categorized = categorizeChannels(raw);
-                    allChannels = categorized;
-                    renderAll();
-                    saveToStorage();
-                    if (categorized.length) playChannel(0);
-                    toggleSidebar(false);
-                    hideStatus();
-                    showToast('📡 Free-TV IPTV লোড', `${categorized.length}টি চ্যানেল লোড করা হয়েছে`, 4000);
-                } catch (err) {
-                    alert('ডিফল্ট প্লেলিস্ট লোড ব্যর্থ: ' + err.message);
-                    showStatus('❌ ডিফল্ট প্লেলিস্ট লোড ব্যর্থ।');
-                }
-            }
-            loadDefaultBtn.addEventListener('click', loadDefaultPlaylist);
-
-            // ===== রেন্ডার =====
-            function renderTabs() {
-                const categories = ['All', 'Working', 'VLC Needed', 'Sports', 'News', 'Entertainment', 'Music', 'Kids',
-                    'Others'
-                ];
-                tabBar.innerHTML = '';
-                categories.forEach(cat => {
-                    const btn = document.createElement('button');
-                    btn.textContent = cat;
-                    if (cat === currentTab) btn.classList.add('active');
-                    btn.addEventListener('click', () => {
-                        currentTab = cat;
-                        renderTabs();
-                        renderChannels();
-                    });
-                    const count = getFilteredChannels(cat).length;
-                    const span = document.createElement('span');
-                    span.className = 'count';
-                    span.textContent = count;
-                    btn.appendChild(span);
-                    tabBar.appendChild(btn);
-                });
-            }
-
-            function getFilteredChannels(tab) {
-                let list = allChannels;
-                if (tab === 'Working') return list.filter(c => c.played === true && c.vlcNeeded === false && c.vlcWorking ===
-                    true);
-                if (tab === 'VLC Needed') return list.filter(c => c.vlcNeeded === true);
-                if (tab !== 'All') return list.filter(c => c.category === tab);
-                return list;
-            }
-
-            function renderChannels() {
-                let list = getFilteredChannels(currentTab);
-                if (searchQuery.trim()) {
-                    const q = searchQuery.trim().toLowerCase();
-                    list = list.filter(c => c.name.toLowerCase().includes(q));
-                }
-                channelGrid.innerHTML = '';
-                if (!list.length) {
-                    channelGrid.innerHTML =
-                        `<div style="color:#555; padding:20px; text-align:center; width:100%;">কোনো চ্যানেল নেই</div>`;
-                    updateNowPlaying();
-                    return;
-                }
-                list.forEach((ch, idx) => {
-                    const div = document.createElement('div');
-                    div.className = 'channel-item';
-                    if (ch.vlcNeeded) div.classList.add('vlc-needed');
-                    else if (ch.played && ch.vlcWorking) div.classList.add('working');
-
-                    const img = document.createElement('img');
-                    img.src = ch.logo ||
-                        'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23555"%3E%3Cpath d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H3V5h18v14zM9 8h2v8H9zm4 0h2v8h-2z"/%3E%3C/svg%3E';
-                    img.onerror = function() {
-                        this.src =
-                            'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23555"%3E%3Cpath d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H3V5h18v14zM9 8h2v8H9zm4 0h2v8h-2z"/%3E%3C/svg%3E';
-                    };
-                    const nameSpan = document.createElement('span');
-                    nameSpan.className = 'ch-name';
-                    nameSpan.textContent = ch.name;
-
-                    const badge = document.createElement('span');
-                    badge.className = 'status-badge-sm';
-                    if (ch.played && ch.vlcWorking && !ch.vlcNeeded) {
-                        badge.classList.add('working');
-                        badge.textContent = '✅ Working';
-                    } else if (ch.vlcNeeded) {
-                        badge.classList.add('vlc');
-                        badge.textContent = '⚠️ VLC';
-                    } else {
-                        badge.classList.add('unknown');
-                        badge.textContent = '❓';
-                    }
-
-                    div.appendChild(img);
-                    div.appendChild(nameSpan);
-                    div.appendChild(badge);
-
-                    div.addEventListener('click', () => {
-                        const globalIdx = allChannels.findIndex(c => c.url === ch.url && c.name === ch.name);
-                        if (globalIdx !== -1) playChannel(globalIdx);
-                    });
-
-                    channelGrid.appendChild(div);
-                });
-
-                const list2 = getFilteredChannels(currentTab);
-                const filtered = searchQuery.trim() ? list2.filter(c => c.name.toLowerCase().includes(searchQuery
-                    .trim().toLowerCase())) : list2;
-                document.querySelectorAll('.channel-item').forEach((el, i) => {
-                    const ch = filtered[i];
-                    if (ch) {
-                        const globalIdx = allChannels.findIndex(c => c.url === ch.url && c.name === ch.name);
-                        if (globalIdx === currentIndex) el.classList.add('active');
-                    }
-                });
-                updateNowPlaying();
-            }
-
-            function renderAll() {
-                renderTabs();
-                renderChannels();
-            }
-
-            // ===== স্ট্যাটাস =====
-            function showStatus(msg) {
-                statusMsg.innerHTML = msg;
+                statusMsg.innerHTML = `<span class="close-msg" id="closeStatusMsg">✕</span>${msg}${vpnMsg}`;
                 statusMsg.style.display = 'block';
+                const closeBtn = document.getElementById('closeStatusMsg');
+                if (closeBtn) {
+                    closeBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        statusMsg.style.display = 'none';
+                        clearTimeout(statusTimeout);
+                    });
+                }
+                statusMsg.onclick = function() {
+                    statusMsg.style.display = 'none';
+                    clearTimeout(statusTimeout);
+                };
+                if (autoClose) {
+                    clearTimeout(statusTimeout);
+                    statusTimeout = setTimeout(() => {
+                        statusMsg.style.display = 'none';
+                    }, 3000);
+                }
             }
 
             function hideStatus() {
                 statusMsg.style.display = 'none';
+                clearTimeout(statusTimeout);
             }
 
             function showStatusWithSpinner(msg) {
                 statusMsg.innerHTML =
-                    `<div class="spinner"></div><div>${msg}</div>`;
+                    `<span class="close-msg" id="closeStatusMsg">✕</span><div class="spinner"></div><div>${msg}</div>`;
                 statusMsg.style.display = 'block';
+                const closeBtn = document.getElementById('closeStatusMsg');
+                if (closeBtn) {
+                    closeBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        statusMsg.style.display = 'none';
+                        clearTimeout(statusTimeout);
+                    });
+                }
+                statusMsg.onclick = function() {
+                    statusMsg.style.display = 'none';
+                    clearTimeout(statusTimeout);
+                };
             }
 
-            // ===== প্লেয়ার =====
-            function destroyPlayers() {
-                if (currentHls) { currentHls.destroy();
-                    currentHls = null; }
-                if (currentMpegts) { currentMpegts.destroy();
-                    currentMpegts = null; }
-                video.pause();
-                video.src = '';
-                video.load();
-            }
-
+            // ===== VLC Backend Health Check =====
             async function checkVlcBackend() {
                 const backend = vlcBackendUrl.value.trim();
                 if (!backend) return false;
@@ -1863,10 +1541,14 @@
                 }
             }
 
+            // ===== VLC Play =====
             async function playWithVlc(url) {
                 const backend = vlcBackendUrl.value.trim();
-                if (!backend) { showStatus('❌ VLC ব্যাকএন্ড URL বসান।'); return false; }
-                showStatusWithSpinner('⏳ VLC ট্রান্সকোডিং...');
+                if (!backend) {
+                    showStatus('❌ VLC ব্যাকএন্ড URL বসান।', false);
+                    return false;
+                }
+                showStatusWithSpinner('⚡ VLC ট্রান্সকোডিং...');
                 statusBadge.innerText = '⏳ VLC';
                 statusBadge.style.borderColor = '#ffaa00';
                 statusBadge.style.color = '#ffaa00';
@@ -1885,14 +1567,13 @@
                         statusBadge.innerText = '✅ VLC';
                         statusBadge.style.borderColor = '#00ff88';
                         statusBadge.style.color = '#00ff88';
-                        vlcRetryCount = 0;
                         return true;
                     } else {
                         throw new Error(data.error || 'VLC error');
                     }
                 } catch (err) {
                     console.error('VLC error:', err);
-                    showStatus(`❌ VLC ব্যাকএন্ড অফলাইন! <br><span style="font-size:0.7rem;">${err.message}</span>`);
+                    showStatus(`❌ VLC ব্যাকএন্ড অফলাইন! <br><span style="font-size:0.7rem;">${err.message}</span>`, false);
                     statusBadge.innerText = '⚠️ VLC Offline';
                     statusBadge.style.borderColor = '#ff4444';
                     statusBadge.style.color = '#ff4444';
@@ -1900,28 +1581,585 @@
                 }
             }
 
-            function playWithBrowser(url) {
+            // ===== VPN Toggle =====
+            vpnToggle.addEventListener('change', function() {
+                isVpnEnabled = this.checked;
+                vpnSuggested = false;
+                if (isVpnEnabled) {
+                    vpnStatus.textContent = '✅ VPN/প্রক্সি সক্রিয় (CORS Proxy)';
+                    vpnStatus.className = 'vpn-status active';
+                    addNotification('🌐 VPN সক্রিয়', 'সব স্ট্রিম প্রক্সি দিয়ে রুট হবে');
+                } else {
+                    vpnStatus.textContent = '⏳ নিষ্ক্রিয়';
+                    vpnStatus.className = 'vpn-status';
+                    addNotification('🌐 VPN নিষ্ক্রিয়', 'সরাসরি সংযোগ');
+                }
+            });
+
+            // ===== Sidebar =====
+            function toggleSidebar(open) { sidebar.classList.toggle('open', open); }
+            menuBtn.addEventListener('click', () => toggleSidebar(true));
+            closeSidebar.addEventListener('click', () => toggleSidebar(false));
+
+            // ===== Notification panel =====
+            function toggleNotifPanel(open) { notifPanel.classList.toggle('open', open); }
+            notifBtn.addEventListener('click', () => toggleNotifPanel(true));
+            notifClose.addEventListener('click', () => toggleNotifPanel(false));
+
+            // ===== Modal =====
+            function openModal() { aboutModal.classList.add('active'); }
+            function closeModal() { aboutModal.classList.remove('active'); }
+            aboutBtn.addEventListener('click', openModal);
+            modalClose.addEventListener('click', closeModal);
+            aboutModal.addEventListener('click', (e) => { if (e.target === aboutModal) closeModal(); });
+            document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+            // ===== View toggle =====
+            document.querySelectorAll('.view-toggle button').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.view-toggle button').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentView = this.dataset.view;
+                    channelGrid.className = 'channel-grid';
+                    if (currentView === 'grid') channelGrid.classList.add('grid-view');
+                    else if (currentView === 'list') channelGrid.classList.add('list-view');
+                    else if (currentView === 'card') channelGrid.classList.add('card-view');
+                    else if (currentView === 'tile') channelGrid.classList.add('tile-view');
+                    renderChannels();
+                });
+            });
+
+            // ===== M3U parser =====
+            function parseM3U(text) {
+                const lines = text.split(/\r?\n/);
+                const result = [];
+                let cur = null;
+                let headers = {};
+                for (let line of lines) {
+                    line = line.trim();
+                    if (!line) continue;
+                    if (line.startsWith('#EXTINF:')) {
+                        const logoMatch = line.match(/tvg-logo\s*=\s*"([^"]*)"/i);
+                        const nameMatch = line.match(/#EXTINF:[^,]*,(.+)/);
+                        const groupMatch = line.match(/group-title\s*=\s*"([^"]*)"/i);
+                        const name = nameMatch ? nameMatch[1].trim() : 'Unknown';
+                        const logo = logoMatch ? logoMatch[1] : '';
+                        const group = groupMatch ? groupMatch[1].trim() : '';
+                        cur = { name, logo, url: '', group, headers: {} };
+                        headers = {};
+                    } else if (line.startsWith('#EXTVLCOPT:')) {
+                        const opt = line.substring(11).trim();
+                        if (opt.startsWith('http-referrer=')) headers.referer = opt.substring(14);
+                        else if (opt.startsWith('http-user-agent=')) headers.userAgent = opt.substring(17);
+                        else if (opt.startsWith('http-cookie=')) headers.cookie = opt.substring(12);
+                        if (cur) cur.headers = { ...headers };
+                    } else if (line.startsWith('#')) {
+                        continue;
+                    } else if (cur && line) {
+                        cur.url = line;
+                        if (Object.keys(headers).length) cur.headers = { ...headers };
+                        if (cur.url) result.push(cur);
+                        cur = null;
+                        headers = {};
+                    }
+                }
+                return result;
+            }
+
+            // ===== Categorization =====
+            function categorizeChannels(raw) {
+                return raw.map(ch => {
+                    const name = ch.name.toLowerCase();
+                    const group = (ch.group || '').toLowerCase();
+                    const full = name + ' ' + group;
+                    let category = 'Others';
+                    if (/sports|football|cricket|match|espn|tennis|basketball|golf|nfl|nba|ipl|bpl|epl|la liga/i.test(full))
+                        category = 'Sports';
+                    else if (/news|bbc|cnn|al jazeera|nbc|sky news|fox news|cnbc|ndtv|times now/i.test(full))
+                        category = 'News';
+                    else if (/movie|entertain|hollywood|bollywood|hbo|netflix|disney|star world|cinema|film|zee|sony/i.test(full))
+                        category = 'Entertainment';
+                    else if (/music|mtv|vh1|radio|song|concert|8tv/i.test(full))
+                        category = 'Music';
+                    else if (/kids|cartoon|nick|disney junior|pogo|boomerang|cartoon network|chutti/i.test(full))
+                        category = 'Kids';
+                    // Audio-only detection – only if URL ends with audio extension or contains /radio/
+                    const isAudioOnly = /\.(mp3|aac|ogg|wav|flac)$/i.test(ch.url) || /\/radio\//i.test(ch.url);
+                    return { ...ch, category, played: false, headers: ch.headers || {}, isAudio: isAudioOnly };
+                });
+            }
+
+            // ===== Playlist management =====
+            function loadPlaylistsFromStorage() {
+                try { playlists = JSON.parse(localStorage.getItem('playlists')) || []; } catch (e) { playlists = []; }
+                renderPlaylistList();
+            }
+
+            function savePlaylistsToStorage() {
+                try { localStorage.setItem('playlists', JSON.stringify(playlists)); } catch (e) {}
+                renderPlaylistList();
+            }
+
+            function renderPlaylistList() {
+                playlistListEl.innerHTML = '';
+                if (!playlists.length) {
+                    playlistListEl.innerHTML = `<div style="color:#555; padding:6px; text-align:center; font-size:0.7rem;">কোনো প্লেলিস্ট নেই</div>`;
+                    return;
+                }
+                playlists.forEach((pl, idx) => {
+                    const div = document.createElement('div');
+                    div.className = 'playlist-item';
+                    const nameSpan = document.createElement('span');
+                    nameSpan.className = 'pl-name';
+                    nameSpan.textContent = pl.name || `প্লেলিস্ট ${idx+1}`;
+                    const actions = document.createElement('div');
+                    actions.className = 'pl-actions';
+                    const loadBtn = document.createElement('button');
+                    loadBtn.textContent = '📂 লোড';
+                    loadBtn.addEventListener('click', (e) => { e.stopPropagation(); loadPlaylist(idx); });
+                    const delBtn = document.createElement('button');
+                    delBtn.textContent = '🗑️';
+                    delBtn.title = 'মুছুন';
+                    delBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        if (confirm(`"${pl.name}" প্লেলিস্ট মুছবেন?`)) {
+                            playlists.splice(idx, 1);
+                            savePlaylistsToStorage();
+                            addNotification('🗑️ ডিলিট', `${pl.name} মুছে ফেলা হয়েছে`);
+                        }
+                    });
+                    actions.appendChild(loadBtn);
+                    actions.appendChild(delBtn);
+                    div.appendChild(nameSpan);
+                    div.appendChild(actions);
+                    playlistListEl.appendChild(div);
+                });
+            }
+
+            function loadPlaylist(index) {
+                if (index < 0 || index >= playlists.length) return;
+                const pl = playlists[index];
+                if (!pl.data || !pl.data.length) { alert('খালি!'); return; }
+                allChannels = pl.data;
+                renderAll();
+                saveToStorage();
+                if (allChannels.length) playChannel(0);
+                toggleSidebar(false);
+                addNotification('📂 প্লেলিস্ট লোড', `${pl.name} লোড করা হয়েছে`);
+            }
+
+            function addPlaylist(name, data) {
+                if (!data || !data.length) return false;
+                playlists.push({ id: Date.now() + '_' + Math.random().toString(36).substr(2, 6), name: name || 'প্লেলিস্ট', data });
+                savePlaylistsToStorage();
+                return true;
+            }
+
+            function addCurrentAsPlaylist() {
+                if (!allChannels.length) { alert('কোনো চ্যানেল নেই!'); return; }
+                const name = prompt('প্লেলিস্টের নাম দিন:', 'My Playlist');
+                if (name === null) return;
+                if (addPlaylist(name || 'My Playlist', allChannels)) {
+                    alert('সংরক্ষিত!');
+                    addNotification('✅ প্লেলিস্ট সংরক্ষিত', name);
+                } else alert('সংরক্ষণ ব্যর্থ!');
+            }
+
+            function resetAllPlaylists() {
+                if (!confirm('সব প্লেলিস্ট ও ডেটা মুছবেন?')) return;
+                playlists = [];
+                savePlaylistsToStorage();
+                allChannels = [];
+                renderAll();
+                destroyPlayers();
+                nowPlayingName.textContent = '—';
+                nowPlayingIndex.textContent = '০ / ০';
+                localStorage.removeItem('m3u_channels');
+                localStorage.removeItem('m3u_current');
+                localStorage.removeItem('playlists');
+                loadStatus.className = 'load-status';
+                loadStatus.textContent = '⏳ প্রস্তুত';
+                renderPlaylistList();
+                addNotification('🗑️ রিসেট', 'সব ডেটা মুছে ফেলা হয়েছে');
+            }
+
+            // ===== Fetch with proxy =====
+            async function fetchWithProxy(url) {
+                if (isVpnEnabled) {
+                    try {
+                        const proxyUrl = CORS_PROXY + encodeURIComponent(url);
+                        const res = await fetch(proxyUrl);
+                        if (res.ok) return await res.text();
+                    } catch (e) {}
+                    try {
+                        const proxyUrl2 = PROXY_ALT + encodeURIComponent(url);
+                        const res2 = await fetch(proxyUrl2);
+                        if (res2.ok) return await res2.text();
+                    } catch (e) {}
+                }
+                try {
+                    const res = await fetch(url);
+                    if (res.ok) return await res.text();
+                } catch (e) {}
+                const proxyUrl = CORS_PROXY + encodeURIComponent(url);
+                const res = await fetch(proxyUrl);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                return await res.text();
+            }
+
+            // ===== Load Toffee =====
+            async function loadToffeePlaylist() {
+                loadStatus.className = 'load-status loading';
+                loadStatus.textContent = '⏳ Toffee লোড হচ্ছে...';
+                showStatus('⏳ Toffee চ্যানেল লোড হচ্ছে...', false);
+                try {
+                    const jsonText = await fetchWithProxy(PLAYLISTS.toffee);
+                    const data = JSON.parse(jsonText);
+                    if (!data.channels || !data.channels.length) throw new Error('কোনো চ্যানেল নেই');
+                    const raw = data.channels.map(ch => {
+                        const headers = ch.headers || {};
+                        let name = ch.name || 'Unknown';
+                        let logo = ch.logo || '';
+                        let url = ch.link || '';
+                        if (!url && ch.url) url = ch.url;
+                        const cookie = headers.cookie || '';
+                        const userAgent = headers['user-agent'] || headers.userAgent || 'Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.71 Mobile Safari/537.36';
+                        const referer = headers.referer || 'https://toffeelive.com/';
+                        return {
+                            name: name,
+                            logo: logo,
+                            url: url,
+                            group: ch.group || 'Toffee',
+                            headers: {
+                                cookie: cookie,
+                                userAgent: userAgent,
+                                referer: referer,
+                                origin: 'https://toffeelive.com'
+                            }
+                        };
+                    });
+                    const filtered = raw.filter(ch => ch.url && ch.url.startsWith('http'));
+                    if (!filtered.length) throw new Error('কোনো কাজের চ্যানেল নেই');
+                    const categorized = categorizeChannels(filtered);
+                    allChannels = categorized;
+                    renderAll();
+                    saveToStorage();
+                    if (categorized.length) playChannel(0);
+                    hideStatus();
+                    loadStatus.className = 'load-status success';
+                    loadStatus.textContent = `✅ সফল! ${categorized.length}টি Toffee চ্যানেল`;
+                    addNotification('📡 Toffee লোড', `${categorized.length}টি চ্যানেল`);
+                    if (!playlists.find(p => p.name === 'Toffee Live')) {
+                        addPlaylist('Toffee Live', categorized);
+                    }
+                } catch (err) {
+                    loadStatus.className = 'load-status error';
+                    loadStatus.textContent = `❌ ব্যর্থ: ${err.message}`;
+                    showStatus(`❌ Toffee লোড ব্যর্থ: ${err.message}`, false);
+                    alert('Toffee লোড ব্যর্থ! দয়া করে VPN/প্রক্সি চালু করে আবার চেষ্টা করুন।');
+                }
+            }
+
+            // ===== Load playlist from URL =====
+            async function loadPlaylistFromUrl(url, name) {
+                loadStatus.className = 'load-status loading';
+                loadStatus.textContent = '⏳ লোড হচ্ছে...';
+                showStatus('⏳ প্লেলিস্ট লোড হচ্ছে...', false);
+                try {
+                    const text = await fetchWithProxy(url);
+                    const raw = parseM3U(text);
+                    if (!raw.length) throw new Error('কোনো চ্যানেল নেই');
+                    const categorized = categorizeChannels(raw);
+                    allChannels = categorized;
+                    renderAll();
+                    saveToStorage();
+                    if (categorized.length) playChannel(0);
+                    hideStatus();
+                    loadStatus.className = 'load-status success';
+                    loadStatus.textContent = `✅ সফল! ${categorized.length}টি চ্যানেল`;
+                    addNotification('📡 প্লেলিস্ট লোড', `${name} - ${categorized.length}টি চ্যানেল`);
+                    if (name && !playlists.find(p => p.name === name)) {
+                        addPlaylist(name, categorized);
+                    }
+                } catch (err) {
+                    loadStatus.className = 'load-status error';
+                    loadStatus.textContent = `❌ ব্যর্থ: ${err.message}`;
+                    showStatus(`❌ লোড ব্যর্থ: ${err.message}`, false);
+                    alert('লোড ব্যর্থ! দয়া করে VPN/প্রক্সি চালু করে আবার চেষ্টা করুন।');
+                }
+            }
+
+            // ===== Pre-defined buttons =====
+            loadFreeTVBtn.addEventListener('click', () => { loadPlaylistFromUrl(PLAYLISTS.freetv, 'Free IPTV'); toggleSidebar(false); });
+            loadJahangirBtn.addEventListener('click', () => { loadPlaylistFromUrl(PLAYLISTS.jahangir, 'Jahangir-IPTV'); toggleSidebar(false); });
+            loadArenaBtn.addEventListener('click', () => { loadPlaylistFromUrl(PLAYLISTS.arena, 'Arena Play'); toggleSidebar(false); });
+            loadLiveTVBtn.addEventListener('click', () => { loadPlaylistFromUrl(PLAYLISTS.livetv, 'Live TV'); toggleSidebar(false); });
+            loadShakilBtn.addEventListener('click', () => { loadPlaylistFromUrl(PLAYLISTS.shakil, 'Shakil TV'); toggleSidebar(false); });
+            loadMrgifyBtn.addEventListener('click', () => { loadPlaylistFromUrl(PLAYLISTS.mrgify, 'Mrgify IPTV'); toggleSidebar(false); });
+            loadSMLiveBtn.addEventListener('click', () => { loadPlaylistFromUrl(PLAYLISTS.smlive, 'SM Live TV'); toggleSidebar(false); });
+            loadLupaelBtn.addEventListener('click', () => { loadPlaylistFromUrl(PLAYLISTS.lupael, 'Lupael/IPTV-org'); toggleSidebar(false); });
+            loadToffeeBtn.addEventListener('click', () => { loadToffeePlaylist(); toggleSidebar(false); });
+            loadYuppTVBtn.addEventListener('click', () => {
+                window.open(PLAYLISTS.yupptv, '_blank');
+                addNotification('🌍 YuppTV', 'ওয়েবসাইটে রিডাইরেক্ট করা হচ্ছে');
+                toggleSidebar(false);
+            });
+
+            // ===== Xtream =====
+            async function loadFromXtream() {
+                const server = xtreamServer.value.trim();
+                const user = xtreamUser.value.trim();
+                const pass = xtreamPass.value.trim();
+                if (!server || !user || !pass) { xtreamStatus.textContent = '❌ সব ফিল্ড পূরণ করুন।'; return; }
+                let base = server.replace(/\/+$/, '');
+                const url = `${base}/player_api.php?username=${encodeURIComponent(user)}&password=${encodeURIComponent(pass)}`;
+                xtreamStatus.textContent = '⏳ লোড হচ্ছে...';
+                loadStatus.className = 'load-status loading';
+                loadStatus.textContent = '⏳ Xtream লোড...';
+                try {
+                    const text = await fetchWithProxy(url);
+                    const data = JSON.parse(text);
+                    if (!data.streams || !data.streams.length) throw new Error('কোনো স্ট্রিম নেই');
+                    const raw = data.streams.map(s => ({
+                        name: s.name || 'Unknown',
+                        logo: s.stream_icon || '',
+                        url: `${base}/live/${user}/${pass}/${s.stream_id}.ts`,
+                        group: s.category_name || ''
+                    }));
+                    const categorized = categorizeChannels(raw);
+                    allChannels = categorized;
+                    renderAll();
+                    saveToStorage();
+                    if (categorized.length) playChannel(0);
+                    toggleSidebar(false);
+                    xtreamStatus.textContent = '✅ লোড সম্পন্ন!';
+                    loadStatus.className = 'load-status success';
+                    loadStatus.textContent = `✅ সফল! ${categorized.length}টি চ্যানেল`;
+                    addNotification('🔑 Xtream লোড', `${categorized.length}টি চ্যানেল`);
+                    if (server && !playlists.find(p => p.name === 'Xtream')) {
+                        addPlaylist('Xtream', categorized);
+                    }
+                } catch (err) {
+                    xtreamStatus.textContent = '❌ ব্যর্থ: ' + err.message;
+                    loadStatus.className = 'load-status error';
+                    loadStatus.textContent = `❌ ব্যর্থ: ${err.message}`;
+                }
+            }
+            xtreamLoginBtn.addEventListener('click', loadFromXtream);
+
+            // ===== File upload =====
+            fileInput.addEventListener('change', function(e) {
+                const file = this.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    const text = ev.target.result;
+                    const raw = parseM3U(text);
+                    if (!raw.length) { alert('কোনো চ্যানেল নেই!'); return; }
+                    const categorized = categorizeChannels(raw);
+                    allChannels = categorized;
+                    renderAll();
+                    saveToStorage();
+                    if (categorized.length) playChannel(0);
+                    loadStatus.className = 'load-status success';
+                    loadStatus.textContent = `✅ সফল! ${categorized.length}টি চ্যানেল`;
+                    addNotification('📂 ফাইল লোড', `${categorized.length}টি চ্যানেল`);
+                    const name = file.name.replace(/\.[^/.]+$/, "") || 'Uploaded';
+                    if (!playlists.find(p => p.name === name)) {
+                        addPlaylist(name, categorized);
+                    } else {
+                        let i = 1;
+                        while (playlists.find(p => p.name === `${name} ${i}`)) i++;
+                        addPlaylist(`${name} ${i}`, categorized);
+                    }
+                };
+                reader.readAsText(file);
+                this.value = '';
+            });
+
+            // ===== URL load =====
+            loadUrlBtn.addEventListener('click', function() {
+                const url = urlInput.value.trim();
+                if (!url) return alert('URL দিন');
+                loadPlaylistFromUrl(url, 'Custom');
+            });
+
+            // ===== Reset =====
+            resetPlaylistsBtn.addEventListener('click', resetAllPlaylists);
+            addCurrentBtn.addEventListener('click', addCurrentAsPlaylist);
+
+            // ===== Render =====
+            function renderTabs() {
+                const cats = ['All', 'Working', 'Not Working', 'Sports', 'News', 'Entertainment', 'Music', 'Kids', 'Others'];
+                tabBar.innerHTML = '';
+                cats.forEach(cat => {
+                    const btn = document.createElement('button');
+                    btn.textContent = cat;
+                    if (cat === currentTab) btn.classList.add('active');
+                    btn.addEventListener('click', () => {
+                        currentTab = cat;
+                        renderTabs();
+                        renderChannels();
+                    });
+                    const count = getFilteredChannels(cat).length;
+                    const span = document.createElement('span');
+                    span.className = 'count';
+                    span.textContent = count;
+                    btn.appendChild(span);
+                    tabBar.appendChild(btn);
+                });
+            }
+
+            function getFilteredChannels(tab) {
+                if (tab === 'Working') return allChannels.filter(c => c.played === true);
+                if (tab === 'Not Working') return allChannels.filter(c => c.played === false);
+                if (tab !== 'All') return allChannels.filter(c => c.category === tab);
+                return allChannels;
+            }
+
+            function renderChannels() {
+                let list = getFilteredChannels(currentTab);
+                if (searchQuery.trim()) {
+                    const q = searchQuery.trim().toLowerCase();
+                    list = list.filter(c => c.name.toLowerCase().includes(q));
+                }
+                channelGrid.innerHTML = '';
+                if (!list.length) {
+                    channelGrid.innerHTML = `<div style="color:#555; padding:20px; text-align:center; width:100%;">কোনো চ্যানেল নেই</div>`;
+                    updateNowPlaying();
+                    return;
+                }
+
+                list.forEach((ch) => {
+                    const div = document.createElement('div');
+                    div.className = 'channel-item';
+                    if (ch.played) div.classList.add('working');
+                    else div.classList.add('not-working');
+
+                    const initial = ch.name ? ch.name.charAt(0).toUpperCase() : '?';
+                    const defaultLogo = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23333'/%3E%3Ctext x='50' y='55' font-size='40' text-anchor='middle' fill='%23ccc' font-family='sans-serif'%3E${encodeURIComponent(initial)}%3C/text%3E%3C/svg%3E`;
+                    const img = document.createElement('img');
+                    img.src = ch.logo || defaultLogo;
+                    img.onerror = function() { this.src = defaultLogo; };
+                    const nameSpan = document.createElement('span');
+                    nameSpan.className = 'ch-name';
+                    nameSpan.textContent = ch.name;
+
+                    const badge = document.createElement('span');
+                    badge.className = 'status-badge-sm';
+                    if (ch.played) {
+                        badge.classList.add('working');
+                        badge.textContent = '✅';
+                    } else {
+                        badge.classList.add('not-working');
+                        badge.textContent = '❌';
+                    }
+
+                    div.appendChild(img);
+                    div.appendChild(nameSpan);
+                    div.appendChild(badge);
+
+                    div.addEventListener('click', () => {
+                        const idx = allChannels.findIndex(c => c.url === ch.url && c.name === ch.name);
+                        if (idx !== -1) playChannel(idx);
+                    });
+
+                    channelGrid.appendChild(div);
+                });
+
+                const list2 = getFilteredChannels(currentTab);
+                const filtered = searchQuery.trim() ? list2.filter(c => c.name.toLowerCase().includes(searchQuery.trim().toLowerCase())) : list2;
+                document.querySelectorAll('.channel-item').forEach((el, i) => {
+                    const ch = filtered[i];
+                    if (ch) {
+                        const idx = allChannels.findIndex(c => c.url === ch.url && c.name === ch.name);
+                        if (idx === currentIndex) el.classList.add('active');
+                    }
+                });
+                updateNowPlaying();
+            }
+
+            function renderAll() {
+                renderTabs();
+                renderChannels();
+            }
+
+            // ===== Player =====
+            function destroyPlayers() {
+                if (currentHls) { currentHls.destroy(); currentHls = null; }
+                if (currentMpegts) { currentMpegts.destroy(); currentMpegts = null; }
+                video.pause();
+                video.src = '';
+                video.load();
+                playPauseBtn.textContent = '▶';
+            }
+
+            // ===== Browser Engine (with audio detection) =====
+            function playWithBrowser(url, headers) {
                 destroyPlayers();
                 hideStatus();
                 statusBadge.innerText = '⚡ HTML5';
                 statusBadge.style.borderColor = '#ff8800';
                 statusBadge.style.color = '#ff8800';
                 const u = url.toLowerCase();
+
+                // Audio-only detection (strict)
+                const isAudioOnly = /\.(mp3|aac|ogg|wav|flac)$/i.test(u) || /\/radio\//i.test(u);
+                if (isAudioOnly) {
+                    // This is a pure audio stream – just play the audio, no visualizer needed
+                    video.src = url;
+                    video.play().catch(() => handlePlayError());
+                    markChannelWorking(true);
+                    // Show a small message that it's audio
+                    showStatus('🎵 অডিও-ওনলি স্ট্রিম', true);
+                    return;
+                }
+
+                // HLS
                 if (u.includes('.m3u8') || u.includes('m3u8')) {
                     if (Hls.isSupported()) {
-                        const hls = new Hls({ enableWorker: true, lowLatencyMode: true });
+                        const hlsConfig = {
+                            enableWorker: true,
+                            lowLatencyMode: true,
+                            xhrSetup: function(xhr, url) {
+                                if (headers) {
+                                    if (headers.cookie) xhr.setRequestHeader('Cookie', headers.cookie);
+                                    if (headers.referer) xhr.setRequestHeader('Referer', headers.referer);
+                                    if (headers.userAgent) xhr.setRequestHeader('User-Agent', headers.userAgent);
+                                    if (headers.origin) xhr.setRequestHeader('Origin', headers.origin);
+                                }
+                            }
+                        };
+                        const hls = new Hls(hlsConfig);
                         currentHls = hls;
                         hls.loadSource(url);
                         hls.attachMedia(video);
-                        hls.on(Hls.Events.MANIFEST_PARSED, () => { video.play().catch(e => console.warn(e)); });
-                        hls.on(Hls.Events.ERROR, (e, data) => { if (data.fatal) handlePlayError(url); });
+                        hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                            video.play().catch(e => console.warn(e));
+                            markChannelWorking(true);
+                        });
+                        hls.on(Hls.Events.ERROR, (e, data) => {
+                            if (data.fatal) {
+                                // Check if it's a codec issue
+                                if (data.details === 'manifestIncompatibleCodecsError') {
+                                    showStatus('⚠️ এই চ্যানেলটি H.265 (HEVC) – VLC ব্যাকএন্ড প্রয়োজন', false);
+                                    statusBadge.innerText = '⚠️ H.265';
+                                    statusBadge.style.borderColor = '#ff8800';
+                                    statusBadge.style.color = '#ff8800';
+                                }
+                                handlePlayError();
+                            }
+                        });
                         return;
                     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                         video.src = url;
-                        video.play().catch(() => handlePlayError(url));
+                        video.play().catch(() => handlePlayError());
+                        markChannelWorking(true);
                         return;
-                    } else { handlePlayError(url); return; }
+                    } else { handlePlayError(); return; }
                 }
+
+                // MPEG-TS
                 if (u.includes('.ts') || u.includes('ts')) {
                     if (mpegts.isSupported()) {
                         const player = mpegts.createPlayer({ type: 'mpegts', url, enableWorker: true, lazyLoad: true });
@@ -1929,106 +2167,71 @@
                         player.attachMediaElement(video);
                         player.load();
                         player.play();
-                        player.on('error', () => handlePlayError(url));
+                        markChannelWorking(true);
+                        player.on('error', () => handlePlayError());
                         return;
                     } else {
                         video.src = url;
-                        video.play().catch(() => handlePlayError(url));
+                        video.play().catch(() => handlePlayError());
+                        markChannelWorking(true);
                         return;
                     }
                 }
+
+                // Fallback (MP4, etc.)
                 video.src = url;
-                video.play().catch(() => handlePlayError(url));
+                video.play().catch(() => handlePlayError());
+                markChannelWorking(true);
             }
 
-            function handlePlayError(url) {
+            function markChannelWorking(status) {
                 const ch = allChannels[currentIndex];
-                if (!ch) return;
-                // VLC টগল অন এবং ব্যাকএন্ড হেলদি থাকলে VLC দিয়ে চেষ্টা
-                if (vlcToggle.checked && vlcBackendHealthy) {
-                    if (!ch.vlcNeeded || vlcRetryCount < 2) {
-                        ch.vlcNeeded = true;
-                        ch.played = false;
-                        ch.vlcWorking = false;
-                        vlcRetryCount++;
-                        renderAll();
-                        playWithVlc(ch.url).then(success => {
-                            if (success) {
-                                ch.played = true;
-                                ch.vlcNeeded = false;
-                                ch.vlcWorking = true;
-                                vlcRetryCount = 0;
-                                renderAll();
-                                showToast('✅ VLC-তে সফল', `${ch.name} চালু হয়েছে`, 3000);
-                            } else {
-                                if (vlcRetryCount >= 2) {
-                                    showStatus(
-                                        '❌ VLC-তেও চালানো যায়নি। <br><span style="font-size:0.7rem;">চ্যানেলটি অফলাইন অথবা URL ভুল।</span>'
-                                        );
-                                    statusBadge.innerText = '❌ Failed';
-                                    statusBadge.style.borderColor = '#ff4444';
-                                    statusBadge.style.color = '#ff4444';
-                                }
-                            }
-                        });
-                        return;
-                    }
-                }
-                // ব্রাউজার ফ্যালব্যাক
-                if (!ch.vlcNeeded) {
-                    ch.vlcNeeded = true;
-                    ch.played = false;
-                    ch.vlcWorking = false;
+                if (ch) {
+                    ch.played = status;
                     renderAll();
-                    showStatus(
-                        '❌ এই চ্যানেল ব্রাউজারে চলে না। <br><span style="font-size:0.7rem;">VLC Needed ট্যাবে দেখুন অথবা VLC ব্যাকএন্ড চালু করুন।</span>'
-                        );
-                    statusBadge.innerText = '⚠️ অসমর্থিত';
+                }
+            }
+
+            function handlePlayError() {
+                const ch = allChannels[currentIndex];
+                if (ch) {
+                    ch.played = false;
+                    renderAll();
+                    showStatus('⚠️ এই চ্যানেলটি চলছে না। VPN/প্রক্সি বা VLC ব্যাকএন্ড চেষ্টা করুন।', false, true);
+                    statusBadge.innerText = '⚠️ অফলাইন';
                     statusBadge.style.borderColor = '#ff4444';
                     statusBadge.style.color = '#ff4444';
-                } else {
-                    showStatus(
-                        '❌ চ্যানেলটি অফলাইন অথবা অ্যাক্সেসযোগ্য নয়। <br><span style="font-size:0.7rem;">অন্য চ্যানেল চেষ্টা করুন।</span>'
-                        );
                 }
             }
 
+            // ===== Play Channel (VLC-First Strategy) =====
             async function playChannel(index) {
                 if (!allChannels.length || index < 0 || index >= allChannels.length) return;
                 currentIndex = index;
                 const ch = allChannels[index];
-                showStatusWithSpinner('⏳ লোড হচ্ছে...');
+                showStatusWithSpinner(`🎬 লোড হচ্ছে: ${ch.name}...`);
                 document.querySelectorAll('.channel-item').forEach(el => el.classList.remove('active'));
                 updateNowPlaying();
-                if (!ch.url) { showStatus('❌ এই চ্যানেলের URL নেই।'); return; }
+                if (!ch.url) { showStatus('❌ এই চ্যানেলের URL নেই।', false); return; }
                 equalizer.classList.remove('paused');
+                statusBadge.innerText = '⏳ লোডিং...';
+                statusBadge.style.borderColor = '#ffaa00';
+                statusBadge.style.color = '#ffaa00';
 
-                // যদি VLC টগল অন এবং ব্যাকএন্ড হেলদি, প্রথমে VLC চেষ্টা করি
+                // VLC-first: if VLC toggle is on and backend healthy, try VLC first
                 if (vlcToggle.checked && vlcBackendHealthy) {
                     const ok = await playWithVlc(ch.url);
                     if (ok) {
                         ch.played = true;
-                        ch.vlcNeeded = false;
-                        ch.vlcWorking = true;
                         renderAll();
                         return;
                     }
-                    // VLC ব্যর্থ হলে ব্রাউজারে ফ্যালব্যাক
+                    // VLC failed, fallback to browser
+                    console.warn('VLC failed, falling back to browser');
                 }
 
-                // ব্রাউজার
-                playWithBrowser(ch.url);
-                video.oncanplay = function() {
-                    if (!ch.vlcNeeded) {
-                        ch.played = true;
-                        ch.vlcWorking = true;
-                        renderAll();
-                    }
-                    video.oncanplay = null;
-                };
-                setTimeout(() => {
-                    if (video.paused && !video.src) handlePlayError(ch.url);
-                }, 10000);
+                // Browser engine
+                playWithBrowser(ch.url, ch.headers || {});
             }
 
             function updateNowPlaying() {
@@ -2042,13 +2245,12 @@
                 nowPlayingIndex.textContent = `${currentIndex+1} / ${allChannels.length}`;
             }
 
-            // ===== নেভিগেশন =====
+            // ===== Navigation =====
             function nextChannel() {
                 if (!allChannels.length) return;
                 const next = (currentIndex + 1) % allChannels.length;
                 playChannel(next);
             }
-
             function prevChannel() {
                 if (!allChannels.length) return;
                 const prev = (currentIndex - 1 + allChannels.length) % allChannels.length;
@@ -2059,17 +2261,13 @@
 
             document.addEventListener('keydown', (e) => {
                 if (e.target.tagName === 'INPUT') return;
-                if (e.key === 'ArrowRight') { e.preventDefault();
-                    nextChannel(); }
-                if (e.key === 'ArrowLeft') { e.preventDefault();
-                    prevChannel(); }
-                if (e.key === '/') { e.preventDefault();
-                    searchInput.focus();
-                    searchInput.select(); }
+                if (e.key === 'ArrowRight') { e.preventDefault(); nextChannel(); }
+                if (e.key === 'ArrowLeft') { e.preventDefault(); prevChannel(); }
+                if (e.key === '/') { e.preventDefault(); searchInput.focus(); searchInput.select(); }
                 if (e.key === 'Enter') { if (searchInput.value.trim()) performSearch(); }
             });
 
-            // ===== সার্চ =====
+            // ===== Search =====
             function performSearch() {
                 searchQuery = searchInput.value.trim();
                 renderChannels();
@@ -2078,54 +2276,15 @@
                     const q = searchQuery.toLowerCase();
                     const filtered = list.filter(c => c.name.toLowerCase().includes(q));
                     if (filtered.length) {
-                        const globalIdx = allChannels.findIndex(c => c.url === filtered[0].url && c.name === filtered[0]
-                            .name);
-                        if (globalIdx !== -1) playChannel(globalIdx);
+                        const idx = allChannels.findIndex(c => c.url === filtered[0].url && c.name === filtered[0].name);
+                        if (idx !== -1) playChannel(idx);
                     }
                 }
             }
             searchBtn.addEventListener('click', performSearch);
             searchInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') performSearch(); });
 
-            // ===== M3U লোড =====
-            function loadM3UContent(text) {
-                const raw = parseM3U(text);
-                if (!raw.length) { alert('কোনো চ্যানেল পাওয়া যায়নি!'); return; }
-                const categorized = categorizeChannels(raw);
-                allChannels = categorized;
-                renderAll();
-                saveToStorage();
-                if (categorized.length) playChannel(0);
-                toggleSidebar(false);
-                showToast('📂 প্লেলিস্ট লোড', `${categorized.length}টি চ্যানেল`, 4000);
-            }
-
-            fileInput.addEventListener('change', function(e) {
-                const file = this.files[0];
-                if (!file) return;
-                const reader = new FileReader();
-                reader.onload = (ev) => loadM3UContent(ev.target.result);
-                reader.readAsText(file);
-                this.value = '';
-            });
-
-            loadUrlBtn.addEventListener('click', function() {
-                const url = urlInput.value.trim();
-                if (!url) return alert('M3U URL দিন');
-                showStatus('⏳ URL থেকে লোড হচ্ছে...');
-                fetch(url)
-                    .then(res => { if (!res.ok) throw new Error('Network error'); return res.text(); })
-                    .then(text => { loadM3UContent(text);
-                        hideStatus(); })
-                    .catch(err => { alert('লোড ব্যর্থ: ' + err.message);
-                        showStatus('❌ লোড ব্যর্থ।'); });
-            });
-
-            // ===== প্লেলিস্ট অ্যাকশন =====
-            addCurrentBtn.addEventListener('click', addCurrentAsPlaylist);
-            resetPlaylistsBtn.addEventListener('click', resetAllPlaylists);
-
-            // ===== স্টোরেজ =====
+            // ===== Storage =====
             function saveToStorage() {
                 try {
                     localStorage.setItem('m3u_channels', JSON.stringify(allChannels));
@@ -2151,55 +2310,180 @@
                 return false;
             }
 
-            // ===== অটো লোড =====
+            // ===== PIP Functions =====
+            async function togglePIP() {
+                try {
+                    if (document.pictureInPictureElement) {
+                        await document.exitPictureInPicture();
+                        addNotification('📺 PiP', 'পিকচার-ইন-পিকচার বন্ধ');
+                    } else if (document.pictureInPictureEnabled) {
+                        await video.requestPictureInPicture();
+                        addNotification('📺 PiP', 'পিকচার-ইন-পিকচার চালু');
+                    } else {
+                        showToast('⚠️ PiP', 'এই ব্রাউজারে PiP সাপোর্টেড নয়', 3000);
+                    }
+                } catch (e) {
+                    showToast('⚠️ PiP', 'PiP চালু করা যায়নি', 3000);
+                }
+            }
+
+            // ===== Speed Control =====
+            function setSpeed(speed) {
+                currentSpeed = speed;
+                video.playbackRate = speed;
+                document.querySelectorAll('.speed-btn').forEach(btn => {
+                    btn.classList.toggle('active', parseFloat(btn.dataset.speed) === speed);
+                });
+                addNotification('⚡ স্পিড', `${speed}x`);
+            }
+
+            // ===== Auto load =====
             window.addEventListener('DOMContentLoaded', function() {
                 loadPlaylistsFromStorage();
                 const loaded = loadFromStorage();
                 if (!loaded) {
                     const demo = [
-                        { name: 'Big Buck Bunny (MP4)', logo: '',
-                            url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-                            category: 'Others', vlcNeeded: false, played: false, vlcWorking: false },
-                        { name: 'HLS Test (m3u8)', logo: '',
-                            url: 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8', category: 'Others',
-                            vlcNeeded: false, played: false, vlcWorking: false }
+                        { name: 'Big Buck Bunny (MP4)', logo: '', url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4', category: 'Others', played: false, headers: {}, isAudio: false },
+                        { name: 'HLS Test (m3u8)', logo: '', url: 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8', category: 'Others', played: false, headers: {}, isAudio: false }
                     ];
                     allChannels = demo;
                     renderAll();
                     playChannel(0);
                 }
-                if (!vlcBackendUrl.value) vlcBackendUrl.value = 'https://vlc-backend-n2p1.onrender.com';
-                checkVlcBackend().then(ok => {
-                    vlcBackendHealthy = ok;
-                    if (ok) {
-                        console.log('✅ VLC ব্যাকএন্ড চালু আছে');
-                        showToast('🔌 VLC ব্যাকএন্ড সংযুক্ত', 'VLC সার্ভার চালু আছে', 5000);
-                    } else {
-                        console.warn('⚠️ VLC ব্যাকএন্ড অফলাইন');
-                        showToast('⚠️ VLC অফলাইন', 'VLC ব্যাকএন্ড সংযোগ নেই, HTML5 মোডে চলবে', 5000);
-                    }
-                });
+                channelGrid.className = 'channel-grid card-view';
+                document.querySelectorAll('.view-toggle button').forEach(b => b.classList.remove('active'));
+                document.querySelector('.view-toggle button[data-view="card"]')?.classList.add('active');
+
                 video.addEventListener('pause', () => equalizer.classList.add('paused'));
                 video.addEventListener('play', () => equalizer.classList.remove('paused'));
                 video.addEventListener('ended', () => equalizer.classList.add('paused'));
-                channelGrid.className = 'channel-grid grid-view';
 
-                // প্রতি ৩০ মিনিটে স্পোর্টস রিফ্রেশ
-                setInterval(() => {
-                    updateSports();
-                }, 1800000);
+                vpnStatus.textContent = '⏳ নিষ্ক্রিয়';
+
+                closeStatusMsg.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    statusMsg.style.display = 'none';
+                });
+                statusMsg.addEventListener('click', function() {
+                    statusMsg.style.display = 'none';
+                });
+
+                // ===== Video Click to Play/Pause =====
+                video.addEventListener('click', function(e) {
+                    if (video.paused) {
+                        video.play().catch(() => {});
+                        playPauseBtn.textContent = '⏸';
+                    } else {
+                        video.pause();
+                        playPauseBtn.textContent = '▶';
+                    }
+                });
+
+                // ===== Custom Controls Events =====
+                playPauseBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    if (video.paused) {
+                        video.play().catch(() => {});
+                        playPauseBtn.textContent = '⏸';
+                    } else {
+                        video.pause();
+                        playPauseBtn.textContent = '▶';
+                    }
+                });
+
+                video.addEventListener('play', () => {
+                    playPauseBtn.textContent = '⏸';
+                    equalizer.classList.remove('paused');
+                });
+                video.addEventListener('pause', () => {
+                    playPauseBtn.textContent = '▶';
+                    equalizer.classList.add('paused');
+                });
+                video.addEventListener('ended', () => {
+                    playPauseBtn.textContent = '▶';
+                    equalizer.classList.add('paused');
+                });
+
+                video.addEventListener('timeupdate', () => {
+                    const pct = (video.currentTime / video.duration) * 100 || 0;
+                    progressFill.style.width = pct + '%';
+                    const fmt = (t) => {
+                        const m = Math.floor(t / 60);
+                        const s = Math.floor(t % 60);
+                        return `${m}:${String(s).padStart(2,'0')}`;
+                    };
+                    timeDisplay.textContent = `${fmt(video.currentTime)} / ${fmt(video.duration || 0)}`;
+                });
+
+                progressBar.addEventListener('click', (e) => {
+                    const rect = progressBar.getBoundingClientRect();
+                    const pct = (e.clientX - rect.left) / rect.width;
+                    video.currentTime = pct * video.duration;
+                });
+
+                volumeSlider.addEventListener('input', () => {
+                    video.volume = parseFloat(volumeSlider.value);
+                });
+
+                fullscreenBtn.addEventListener('click', () => {
+                    if (document.fullscreenElement) {
+                        document.exitFullscreen();
+                    } else {
+                        videoWrapper.requestFullscreen().catch(() => {});
+                    }
+                });
+
+                video.addEventListener('dblclick', function() {
+                    if (document.fullscreenElement) {
+                        document.exitFullscreen();
+                    } else {
+                        videoWrapper.requestFullscreen().catch(() => {});
+                    }
+                });
+
+                // ===== PIP =====
+                pipHeaderBtn.addEventListener('click', togglePIP);
+                pipMenuItem.addEventListener('click', togglePIP);
+
+                // ===== 3-Dot Menu =====
+                threeDotBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    threeDotDropdown.classList.toggle('show');
+                });
+
+                document.addEventListener('click', function() {
+                    threeDotDropdown.classList.remove('show');
+                });
+
+                // ===== Speed Options =====
+                document.querySelectorAll('.speed-btn').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const speed = parseFloat(this.dataset.speed);
+                        setSpeed(speed);
+                        threeDotDropdown.classList.remove('show');
+                    });
+                });
+
+                // ===== VLC Backend Check =====
+                checkVlcBackend().then(ok => {
+                    vlcBackendHealthy = ok;
+                    if (ok) {
+                        addNotification('🔌 VLC সংযুক্ত', 'VLC সার্ভার চালু আছে');
+                    } else {
+                        addNotification('⚠️ VLC অফলাইন', 'HTML5 মোডে চলবে');
+                    }
+                });
+
+                // Save VLC backend URL when changed
+                vlcToggle.addEventListener('change', function() {
+                    // Re-check VLC backend when toggled
+                    checkVlcBackend();
+                });
             });
 
-            vlcToggle.addEventListener('change', function() {
-                if (allChannels.length) {
-                    const ch = allChannels[currentIndex];
-                    if (ch) playChannel(currentIndex);
-                }
-            });
-
-            console.log('✅ Student Care-CTC TV Player loaded with all features!');
-            console.log('📺 Free-TV IPTV: https://raw.githubusercontent.com/Free-TV/IPTV/master/playlist.m3u8');
-            console.log('🔗 VLC Backend: https://vlc-backend-n2p1.onrender.com');
+            console.log('✅ Student Care-CTC TV Player loaded successfully!');
+            console.log('📺 VLC-first strategy enabled for H.265/MPEG-2');
         })();
     </script>
 </body>
