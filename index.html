@@ -6,8 +6,10 @@
     <title>Student Care-CTC TV Player</title>
     <link rel="manifest" href="data:application/json,{&quot;name&quot;:&quot;CTC TV Player&quot;,&quot;short_name&quot;:&quot;CTC TV&quot;,&quot;start_url&quot;:&quot;.&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;background_color&quot;:&quot;#0a0a15&quot;,&quot;theme_color&quot;:&quot;#e94560&quot;,&quot;icons&quot;:[{&quot;src&quot;:&quot;https://i.postimg.cc/3RWLXLS4/Studentcare-IPTV.png&quot;,&quot;sizes&quot;:&quot;192x192&quot;,&quot;type&quot;:&quot;image/png&quot;}]}" />
     <link rel="icon" type="image/png" href="https://i.postimg.cc/3RWLXLS4/Studentcare-IPTV.png" />
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/mpegts.js@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mpegts.js@latest">
+    </script>
     <style>
         /* ===== GLOBAL RESET ===== */
         * {
@@ -16,12 +18,18 @@
             box-sizing: border-box;
             font-family: 'Segoe UI', system-ui, sans-serif;
         }
+        html,
+        body {
+            height: 100%;
+            overflow: hidden;
+            /* prevent body scroll, only inner scroll */;
+        }
         body {
             background: #0a0a15;
             color: #f0f0f0;
-            height: 100vh;
             display: flex;
             flex-direction: column;
+            height: 100vh;
             overflow: hidden;
         }
 
@@ -89,7 +97,7 @@
             font-size: 1.2rem;
             font-weight: 700;
             color: #fff;
-            background: rgba(0,0,0,0.3);
+            background: rgba(0, 0, 0, 0.3);
             padding: 2px 14px;
             border-radius: 20px;
             display: inline-block;
@@ -98,7 +106,7 @@
             font-size: 0.85rem;
             font-weight: 600;
             color: #ffaa00;
-            background: rgba(0,0,0,0.2);
+            background: rgba(0, 0, 0, 0.2);
             padding: 2px 12px;
             border-radius: 12px;
             display: inline-block;
@@ -121,7 +129,7 @@
             transition: 0.2s;
         }
         .header-right button:hover {
-            background: rgba(255,255,255,0.08);
+            background: rgba(255, 255, 255, 0.08);
             color: #e94560;
         }
         .status-badge {
@@ -163,9 +171,11 @@
             transition: right 0.3s ease;
             z-index: 10002;
             overflow-y: auto;
-            box-shadow: -4px 0 20px rgba(0,0,0,0.7);
+            box-shadow: -4px 0 20px rgba(0, 0, 0, 0.7);
         }
-        .notif-panel.open { right: 0; }
+        .notif-panel.open {
+            right: 0;
+        }
         .notif-panel .close-btn {
             float: right;
             background: none;
@@ -186,8 +196,14 @@
             font-size: 0.8rem;
             color: #ccc;
         }
-        .notif-item .title { color: #ff8800; font-weight: 600; }
-        .notif-item .time { color: #666; font-size: 0.6rem; }
+        .notif-item .title {
+            color: #ff8800;
+            font-weight: 600;
+        }
+        .notif-item .time {
+            color: #666;
+            font-size: 0.6rem;
+        }
 
         /* ===== SIDEBAR ===== */
         .sidebar {
@@ -199,12 +215,14 @@
             background: #0a0a18;
             padding: 16px 18px 80px;
             transform: translateX(-100%);
-            transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 999;
             overflow-y: auto;
             scroll-behavior: smooth;
         }
-        .sidebar.open { transform: translateX(0); }
+        .sidebar.open {
+            transform: translateX(0);
+        }
         .sidebar .close-btn {
             position: sticky;
             top: 0;
@@ -223,7 +241,10 @@
             border-bottom: 1px solid #1a1a30;
             padding-bottom: 14px;
         }
-        .sidebar .section:last-child { border-bottom: none; margin-bottom: 0; }
+        .sidebar .section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
         .sidebar .section-title {
             font-size: 0.9rem;
             font-weight: 700;
@@ -253,7 +274,9 @@
             color: #fff;
             font-size: 0.8rem;
         }
-        .sidebar input::placeholder { color: #555; }
+        .sidebar input::placeholder {
+            color: #555;
+        }
         .sidebar .btn {
             background: #e94560;
             color: #fff;
@@ -267,16 +290,41 @@
             font-size: 0.8rem;
             display: inline-block;
         }
-        .sidebar .btn:hover { background: #c73652; transform: scale(1.02); }
-        .sidebar .btn-sm { padding: 4px 10px; font-size: 0.7rem; }
-        .btn-group { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 4px; }
-        .btn-secondary { background: #2a3a5a; }
-        .btn-secondary:hover { background: #3a4a7a; }
-        .btn-danger { background: #8a2a2a; }
-        .btn-danger:hover { background: #aa3a3a; }
-        .btn-success { background: #1a7a4a; }
-        .btn-success:hover { background: #2a9a5a; }
-        .btn-about { background: #6a3a8a; }
+        .sidebar .btn:hover {
+            background: #c73652;
+            transform: scale(1.02);
+        }
+        .sidebar .btn-sm {
+            padding: 4px 10px;
+            font-size: 0.7rem;
+        }
+        .btn-group {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            margin-top: 4px;
+        }
+        .btn-secondary {
+            background: #2a3a5a;
+        }
+        .btn-secondary:hover {
+            background: #3a4a7a;
+        }
+        .btn-danger {
+            background: #8a2a2a;
+        }
+        .btn-danger:hover {
+            background: #aa3a3a;
+        }
+        .btn-success {
+            background: #1a7a4a;
+        }
+        .btn-success:hover {
+            background: #2a9a5a;
+        }
+        .btn-about {
+            background: #6a3a8a;
+        }
         .load-status {
             font-size: 0.7rem;
             padding: 3px 8px;
@@ -284,9 +332,15 @@
             margin-top: 4px;
             background: #0a0a18;
         }
-        .load-status.success { color: #00ff88; }
-        .load-status.error { color: #ff4444; }
-        .load-status.loading { color: #ffaa00; }
+        .load-status.success {
+            color: #00ff88;
+        }
+        .load-status.error {
+            color: #ff4444;
+        }
+        .load-status.loading {
+            color: #ffaa00;
+        }
         .playlist-list {
             margin-top: 6px;
             max-height: 110px;
@@ -324,8 +378,16 @@
             gap: 10px;
             margin: 4px 0;
         }
-        .toggle-wrap input { width: 18px; height: 18px; accent-color: #e94560; }
-        .toggle-wrap label { margin: 0; font-size: 0.8rem; color: #ccc; }
+        .toggle-wrap input {
+            width: 18px;
+            height: 18px;
+            accent-color: #e94560;
+        }
+        .toggle-wrap label {
+            margin: 0;
+            font-size: 0.8rem;
+            color: #ccc;
+        }
         .dmca-notice {
             font-size: 0.6rem;
             color: #555;
@@ -335,14 +397,16 @@
             line-height: 1.5;
             text-align: justify;
         }
-        .dmca-notice strong { color: #777; }
+        .dmca-notice strong {
+            color: #777;
+        }
 
         /* ===== VPN SECTION ===== */
         .vpn-section {
             margin-top: 10px;
             padding: 10px;
-            background: rgba(0,200,255,0.05);
-            border: 1px solid rgba(0,200,255,0.15);
+            background: rgba(0, 200, 255, 0.05);
+            border: 1px solid rgba(0, 200, 255, 0.15);
             border-radius: 8px;
         }
         .vpn-section .vpn-toggle {
@@ -351,12 +415,33 @@
             gap: 10px;
             margin: 4px 0;
         }
-        .vpn-section .vpn-toggle input { width: 18px; height: 18px; accent-color: #00ccff; }
-        .vpn-section .vpn-toggle label { font-size: 0.8rem; color: #ccc; }
-        .vpn-section .vpn-status { font-size: 0.65rem; color: #666; margin-top: 4px; }
-        .vpn-section .vpn-status.active { color: #00ff88; }
-        .vpn-help { font-size: 0.7rem; color: #888; margin-top: 6px; line-height: 1.5; }
-        .vpn-help a { color: #00ccff; text-decoration: none; }
+        .vpn-section .vpn-toggle input {
+            width: 18px;
+            height: 18px;
+            accent-color: #00ccff;
+        }
+        .vpn-section .vpn-toggle label {
+            font-size: 0.8rem;
+            color: #ccc;
+        }
+        .vpn-section .vpn-status {
+            font-size: 0.65rem;
+            color: #666;
+            margin-top: 4px;
+        }
+        .vpn-section .vpn-status.active {
+            color: #00ff88;
+        }
+        .vpn-help {
+            font-size: 0.7rem;
+            color: #888;
+            margin-top: 6px;
+            line-height: 1.5;
+        }
+        .vpn-help a {
+            color: #00ccff;
+            text-decoration: none;
+        }
 
         /* ===== TOAST ===== */
         .toast-container {
@@ -374,13 +459,16 @@
             border-left: 4px solid #e94560;
             padding: 10px 14px;
             border-radius: 8px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
             color: #eee;
             font-size: 0.75rem;
             animation: slideIn 0.4s ease;
             border: 1px solid #2a2a4a;
         }
-        .toast .toast-title { font-weight: 700; color: #ff8800; }
+        .toast .toast-title {
+            font-weight: 700;
+            color: #ff8800;
+        }
         .toast .toast-close {
             float: right;
             background: none;
@@ -390,8 +478,14 @@
             font-size: 1rem;
         }
         @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
 
         /* ===== ABOUT MODAL ===== */
@@ -401,14 +495,16 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.85);
+            background: rgba(0, 0, 0, 0.85);
             z-index: 10000;
             display: none;
             align-items: center;
             justify-content: center;
             padding: 20px;
         }
-        .modal-overlay.active { display: flex; }
+        .modal-overlay.active {
+            display: flex;
+        }
         .modal-box {
             background: #14142a;
             border: 2px solid #e94560;
@@ -441,35 +537,48 @@
             color: #ddd;
             line-height: 1.8;
         }
-        .modal-box .modal-body .feature-list { list-style: none; padding: 0; }
+        .modal-box .modal-body .feature-list {
+            list-style: none;
+            padding: 0;
+        }
         .modal-box .modal-body .feature-list li {
             padding: 5px 0;
             border-bottom: 1px solid #1a1a30;
             font-size: 0.95rem;
         }
-        .modal-box .modal-body .feature-list li::before { content: "▸ "; color: #e94560; }
+        .modal-box .modal-body .feature-list li::before {
+            content: "▸ ";
+            color: #e94560;
+        }
         .modal-box .dmca-modal {
             margin-top: 14px;
             padding: 14px;
-            background: rgba(255,0,0,0.05);
-            border: 1px solid rgba(255,68,68,0.2);
+            background: rgba(255, 0, 0, 0.05);
+            border: 1px solid rgba(255, 68, 68, 0.2);
             border-radius: 8px;
             font-size: 0.85rem;
             color: #aaa;
             line-height: 1.6;
         }
-        .modal-box .dmca-modal strong { color: #ff6666; }
+        .modal-box .dmca-modal strong {
+            color: #ff6666;
+        }
         .modal-box .dev-details {
             margin-top: 12px;
             padding: 12px;
-            background: rgba(255,255,255,0.03);
+            background: rgba(255, 255, 255, 0.03);
             border-radius: 8px;
             font-size: 0.95rem;
             color: #ccc;
             line-height: 1.8;
         }
-        .modal-box .dev-details strong { color: #fff; }
-        .modal-box .dev-details a { color: #e94560; text-decoration: none; }
+        .modal-box .dev-details strong {
+            color: #fff;
+        }
+        .modal-box .dev-details a {
+            color: #e94560;
+            text-decoration: none;
+        }
 
         /* ===== MAIN LAYOUT ===== */
         .main-content {
@@ -520,10 +629,10 @@
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(-50%,-50%);
+            transform: translate(-50%, -50%);
             color: #ddd;
             text-align: center;
-            background: rgba(0,0,0,0.85);
+            background: rgba(0, 0, 0, 0.85);
             padding: 12px 20px;
             border-radius: 10px;
             pointer-events: auto;
@@ -561,7 +670,14 @@
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
 
         /* ===== CUSTOM CONTROLS ===== */
         .custom-controls {
@@ -570,7 +686,7 @@
             left: 0;
             right: 0;
             padding: 8px 12px;
-            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
             display: flex;
             align-items: center;
             gap: 8px;
@@ -593,11 +709,14 @@
             transition: 0.2s;
             position: relative;
         }
-        .custom-controls button:hover { background: rgba(255,255,255,0.1); color: #e94560; }
+        .custom-controls button:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #e94560;
+        }
         .custom-controls .progress-bar {
             flex: 1;
             height: 3px;
-            background: rgba(255,255,255,0.15);
+            background: rgba(255, 255, 255, 0.15);
             border-radius: 2px;
             cursor: pointer;
             position: relative;
@@ -611,7 +730,7 @@
         }
         .custom-controls .time-display {
             font-size: 0.65rem;
-            color: rgba(255,255,255,0.5);
+            color: rgba(255, 255, 255, 0.5);
             min-width: 60px;
             text-align: center;
         }
@@ -619,7 +738,7 @@
             width: 50px;
             height: 3px;
             -webkit-appearance: none;
-            background: rgba(255,255,255,0.15);
+            background: rgba(255, 255, 255, 0.15);
             border-radius: 2px;
             outline: none;
         }
@@ -645,7 +764,7 @@
             border-radius: 8px;
             padding: 4px 0;
             min-width: 140px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.7);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7);
             display: none;
             z-index: 20;
         }
@@ -664,7 +783,7 @@
             white-space: nowrap;
         }
         .three-dot-menu .dropdown .dropdown-item:hover {
-            background: rgba(255,255,255,0.05);
+            background: rgba(255, 255, 255, 0.05);
             color: #fff;
         }
         .three-dot-menu .dropdown .dropdown-item .icon {
@@ -725,7 +844,11 @@
             transition: 0.2s;
             white-space: nowrap;
         }
-        .status-bar .nav-arrow:hover { background: #e94560; color: #fff; border-color: #e94560; }
+        .status-bar .nav-arrow:hover {
+            background: #e94560;
+            color: #fff;
+            border-color: #e94560;
+        }
         .status-bar .channel-info {
             flex: 1;
             text-align: center;
@@ -746,7 +869,10 @@
             text-overflow: ellipsis;
             max-width: 50%;
         }
-        .status-bar .channel-info .ch-index { color: #666; font-size: 0.8rem; }
+        .status-bar .channel-info .ch-index {
+            color: #666;
+            font-size: 0.8rem;
+        }
         .equalizer {
             display: flex;
             align-items: flex-end;
@@ -760,12 +886,35 @@
             border-radius: 2px;
             animation: eq 0.7s infinite alternate ease-in-out;
         }
-        .equalizer .bar:nth-child(2) { height: 10px; animation-delay: 0.1s; }
-        .equalizer .bar:nth-child(3) { height: 14px; animation-delay: 0.2s; }
-        .equalizer .bar:nth-child(4) { height: 8px; animation-delay: 0.3s; }
-        .equalizer .bar:nth-child(5) { height: 12px; animation-delay: 0.15s; }
-        @keyframes eq { 0% { transform: scaleY(0.3); } 100% { transform: scaleY(1); } }
-        .equalizer.paused .bar { animation: none; height: 4px; opacity: 0.2; }
+        .equalizer .bar:nth-child(2) {
+            height: 10px;
+            animation-delay: 0.1s;
+        }
+        .equalizer .bar:nth-child(3) {
+            height: 14px;
+            animation-delay: 0.2s;
+        }
+        .equalizer .bar:nth-child(4) {
+            height: 8px;
+            animation-delay: 0.3s;
+        }
+        .equalizer .bar:nth-child(5) {
+            height: 12px;
+            animation-delay: 0.15s;
+        }
+        @keyframes eq {
+            0% {
+                transform: scaleY(0.3);
+            }
+            100% {
+                transform: scaleY(1);
+            }
+        }
+        .equalizer.paused .bar {
+            animation: none;
+            height: 4px;
+            opacity: 0.2;
+        }
 
         /* ===== CHANNEL SECTION ===== */
         .channel-section .channel-toolbar-top {
@@ -794,8 +943,15 @@
             font-size: 0.75rem;
             transition: 0.2s;
         }
-        .channel-section .view-toggle button:hover { background: #2a2a4a; color: #fff; }
-        .channel-section .view-toggle button.active { background: #e94560; color: #fff; border-color: #e94560; }
+        .channel-section .view-toggle button:hover {
+            background: #2a2a4a;
+            color: #fff;
+        }
+        .channel-section .view-toggle button.active {
+            background: #e94560;
+            color: #fff;
+            border-color: #e94560;
+        }
 
         .channel-section .tab-bar {
             display: flex;
@@ -817,8 +973,15 @@
             white-space: nowrap;
             transition: 0.2s;
         }
-        .channel-section .tab-bar button:hover { background: #2a2a4a; color: #fff; }
-        .channel-section .tab-bar button.active { background: #e94560; color: #fff; border-color: #e94560; }
+        .channel-section .tab-bar button:hover {
+            background: #2a2a4a;
+            color: #fff;
+        }
+        .channel-section .tab-bar button.active {
+            background: #e94560;
+            color: #fff;
+            border-color: #e94560;
+        }
         .channel-section .tab-bar .count {
             background: #2a2a4a;
             padding: 0 5px;
@@ -826,7 +989,9 @@
             font-size: 0.6rem;
             margin-left: 3px;
         }
-        .channel-section .tab-bar button.active .count { background: rgba(255,255,255,0.15); }
+        .channel-section .tab-bar button.active .count {
+            background: rgba(255, 255, 255, 0.15);
+        }
 
         .search-bar {
             flex-shrink: 0;
@@ -850,7 +1015,10 @@
             font-size: 0.7rem;
             height: 26px;
         }
-        .search-bar input:focus { outline: none; border-color: #e94560; }
+        .search-bar input:focus {
+            outline: none;
+            border-color: #e94560;
+        }
         .search-bar .search-btn {
             background: #e94560;
             border: none;
@@ -861,7 +1029,10 @@
             font-size: 0.7rem;
             height: 26px;
         }
-        .search-bar .key-hint { font-size: 0.5rem; color: #444; }
+        .search-bar .key-hint {
+            font-size: 0.5rem;
+            color: #444;
+        }
 
         .channel-grid-wrapper {
             flex: 1;
@@ -869,6 +1040,8 @@
             padding: 0;
             margin: 0;
             min-height: 60px;
+            -webkit-overflow-scrolling: touch;
+            /* smooth scroll on iOS */;
         }
         .channel-grid {
             display: grid;
@@ -877,10 +1050,19 @@
             padding: 0;
             margin: 0;
         }
-        .channel-grid.grid-view { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
-        .channel-grid.list-view { grid-template-columns: 1fr; }
-        .channel-grid.list-view .channel-item { padding: 4px 8px; }
-        .channel-grid.list-view .channel-item .ch-name { font-size: 0.8rem; white-space: normal; }
+        .channel-grid.grid-view {
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        }
+        .channel-grid.list-view {
+            grid-template-columns: 1fr;
+        }
+        .channel-grid.list-view .channel-item {
+            padding: 4px 8px;
+        }
+        .channel-grid.list-view .channel-item .ch-name {
+            font-size: 0.8rem;
+            white-space: normal;
+        }
         .channel-grid.card-view {
             grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
         }
@@ -896,7 +1078,7 @@
         .channel-grid.card-view .channel-item:hover {
             transform: scale(1.05) translateY(-4px);
             border-color: #e94560;
-            box-shadow: 0 8px 30px rgba(233,69,96,0.25);
+            box-shadow: 0 8px 30px rgba(233, 69, 96, 0.25);
         }
         .channel-grid.card-view .channel-item img {
             width: 48px;
@@ -915,7 +1097,9 @@
             margin-top: 2px;
             font-size: 0.55rem;
         }
-        .channel-grid.tile-view { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); }
+        .channel-grid.tile-view {
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+        }
         .channel-grid.tile-view .channel-item {
             flex-direction: column;
             padding: 6px 2px;
@@ -924,9 +1108,20 @@
             background: #14142a;
             border: 1px solid #2a2a4a;
         }
-        .channel-grid.tile-view .channel-item img { width: 28px; height: 28px; margin-bottom: 3px; }
-        .channel-grid.tile-view .channel-item .ch-name { font-size: 0.6rem; white-space: normal; text-align: center; }
-        .channel-grid.tile-view .channel-item .status-badge-sm { display: block; font-size: 0.45rem; }
+        .channel-grid.tile-view .channel-item img {
+            width: 28px;
+            height: 28px;
+            margin-bottom: 3px;
+        }
+        .channel-grid.tile-view .channel-item .ch-name {
+            font-size: 0.6rem;
+            white-space: normal;
+            text-align: center;
+        }
+        .channel-grid.tile-view .channel-item .status-badge-sm {
+            display: block;
+            font-size: 0.45rem;
+        }
 
         .channel-item {
             background: #14142a;
@@ -940,16 +1135,24 @@
             transition: 0.15s;
             border: 1px solid transparent;
         }
-        .channel-item:hover { background: #1e1e3a; border-color: #3a3a5a; }
+        .channel-item:hover {
+            background: #1e1e3a;
+            border-color: #3a3a5a;
+        }
         .channel-item.active {
             background: #1a2a1a;
             border-left-color: #00ff88;
             border-color: #00ff88;
-            box-shadow: 0 0 25px rgba(0,255,136,0.4), inset 0 0 15px rgba(0,255,136,0.1);
+            box-shadow: 0 0 25px rgba(0, 255, 136, 0.4), inset 0 0 15px rgba(0, 255, 136, 0.1);
             transform: scale(1.03);
         }
-        .channel-item.working { border-left-color: #00ff88; }
-        .channel-item.not-working { border-left-color: #ff4444; opacity: 0.8; }
+        .channel-item.working {
+            border-left-color: #00ff88;
+        }
+        .channel-item.not-working {
+            border-left-color: #ff4444;
+            opacity: 0.8;
+        }
         .channel-item img {
             width: 18px;
             height: 18px;
@@ -973,9 +1176,18 @@
             flex-shrink: 0;
             font-weight: 600;
         }
-        .channel-item .status-badge-sm.working { background: #1a7a4a; color: #00ff88; }
-        .channel-item .status-badge-sm.not-working { background: #7a2a2a; color: #ff6666; }
-        .channel-item .status-badge-sm.unknown { background: #2a2a4a; color: #888; }
+        .channel-item .status-badge-sm.working {
+            background: #1a7a4a;
+            color: #00ff88;
+        }
+        .channel-item .status-badge-sm.not-working {
+            background: #7a2a2a;
+            color: #ff6666;
+        }
+        .channel-item .status-badge-sm.unknown {
+            background: #2a2a4a;
+            color: #888;
+        }
 
         /* ===== FOOTER ===== */
         .footer {
@@ -987,218 +1199,364 @@
             color: #555;
             border-top: 1px solid #1a1a30;
         }
-        .footer span { color: #e94560; }
-        .footer a { color: #e94560; text-decoration: none; }
-        .footer .dmca-footer { font-size: 0.5rem; color: #444; margin-top: 2px; }
-        .footer .dev-footer { font-size: 0.55rem; color: #666; margin-top: 2px; }
+        .footer span {
+            color: #e94560;
+        }
+        .footer a {
+            color: #e94560;
+            text-decoration: none;
+        }
+        .footer .dmca-footer {
+            font-size: 0.5rem;
+            color: #444;
+            margin-top: 2px;
+        }
+        .footer .dev-footer {
+            font-size: 0.55rem;
+            color: #666;
+            margin-top: 2px;
+        }
 
         /* ===== SCROLLBAR ===== */
-        ::-webkit-scrollbar { width: 4px; height: 4px; }
-        ::-webkit-scrollbar-track { background: #0a0a15; }
-        ::-webkit-scrollbar-thumb { background: #e94560; border-radius: 10px; }
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0a15;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #e94560;
+            border-radius: 10px;
+        }
 
-        /* ===== RESPONSIVE (ফাঁকা জায়গা সরানো) ===== */
+        /* ============================================================
+               RESPONSIVE FIX – mobile scroll, no blank space, footer fixed
+               ============================================================ */
         @media (max-width: 992px) {
+            body {
+                height: 100vh !important;
+                overflow: hidden !important;
+                display: flex;
+                flex-direction: column;
+            }
+
             .main-content {
                 flex-direction: column;
                 gap: 6px;
                 padding: 4px 6px 0;
-                height: auto;
-                min-height: 0;
-                overflow: visible;
+                height: calc(100vh - 50px) !important;
+                /* header height approx */
+                overflow: hidden !important;
+                flex: 1 1 auto;
             }
+
             .video-section {
                 flex: none;
                 height: auto;
             }
+
             .video-wrapper {
-                max-height: 35vh;
+                max-height: 30vh;
+                /* more room for channels */;
             }
+
             .channel-section {
                 border-left: none;
                 padding-left: 0;
-                flex: none !important;
-                height: auto !important;
-                max-height: none !important;
-                display: flex;
+                flex: 1 1 auto !important;
+                display: flex !important;
                 flex-direction: column;
+                overflow: hidden !important;
+                min-height: 0;
             }
+
             .channel-grid-wrapper {
-                flex: none !important;
-                overflow-y: auto;
-                padding: 0 !important;
+                flex: 1 1 auto !important;
+                overflow-y: auto !important;
+                -webkit-overflow-scrolling: touch;
+                padding: 0 0 6px 0 !important;
                 margin: 0 !important;
                 min-height: 0 !important;
-                max-height: none !important;
             }
+
             .channel-grid {
-                padding-bottom: 0 !important;
-                margin-bottom: 0 !important;
+                padding-bottom: 12px !important;
             }
-            .channel-grid.grid-view { grid-template-columns: repeat(auto-fill, minmax(105px, 1fr)); }
-            .channel-grid.card-view { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
-            .channel-grid.tile-view { grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); }
-            .header-center .clock { font-size: 1rem; }
-            .header-center .date { font-size: 0.75rem; }
-            .channel-section .tab-bar button { font-size: 0.8rem; padding: 2px 10px; }
-            .status-bar .nav-arrow { font-size: 1rem; padding: 3px 14px; }
-            .status-bar .channel-info { font-size: 1rem; }
-            .header-title { font-size: 1.2rem; }
-            .sidebar { padding: 12px 14px 60px; }
-            .header-center { position: static; transform: none; flex: 1; text-align: center; }
-            .header { flex-wrap: wrap; gap: 4px; }
-            .notif-panel { width: 320px; right: -320px; }
-            .search-bar { order: 0; border-bottom: 1px solid #1a1a30; border-top: none; margin-top: 0; }
+
+            /* footer always at bottom, no extra blank */
             .footer {
-                flex-shrink: 0;
-                padding: 3px 8px;
-                font-size: 0.55rem;
-                margin-top: 0;
-                border-top: 1px solid #1a1a30;
                 position: relative !important;
+                flex-shrink: 0;
+                padding: 6px 8px;
+                font-size: 0.55rem;
+                margin-top: auto !important;
+                border-top: 1px solid #1a1a30;
+                background: #0a0a15;
+                width: 100%;
+            }
+
+            .header-center {
+                position: static;
+                transform: none;
+                flex: 1;
+                text-align: center;
+            }
+            .header {
+                flex-wrap: wrap;
+                gap: 4px;
+            }
+            .header-center .clock {
+                font-size: 1rem;
+            }
+            .header-center .date {
+                font-size: 0.75rem;
+            }
+            .header-title {
+                font-size: 1.2rem;
+            }
+            .header-title .sub {
+                display: none;
+            }
+            .channel-section .tab-bar button {
+                font-size: 0.8rem;
+                padding: 2px 10px;
+            }
+            .status-bar .nav-arrow {
+                font-size: 1rem;
+                padding: 3px 14px;
+            }
+            .status-bar .channel-info {
+                font-size: 1rem;
+            }
+            .notif-panel {
+                width: 320px;
+                right: -320px;
+            }
+            .search-bar {
+                order: 0;
+                border-bottom: 1px solid #1a1a30;
+                border-top: none;
+                margin-top: 0;
+            }
+            .channel-grid.grid-view {
+                grid-template-columns: repeat(auto-fill, minmax(105px, 1fr));
+            }
+            .channel-grid.card-view {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+            .channel-grid.tile-view {
+                grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
             }
         }
 
         @media (max-width: 768px) {
-            .channel-section {
-                padding-left: 0 !important;
-                padding-bottom: 0 !important;
-                margin-bottom: 0 !important;
-                flex: none !important;
-                max-height: none !important;
-            }
-            .channel-grid-wrapper {
-                padding-bottom: 0 !important;
-                margin-bottom: 0 !important;
-                min-height: 0 !important;
-                flex: none !important;
-            }
             .video-wrapper {
-                max-height: 32vh;
+                max-height: 28vh;
             }
-            .channel-grid.grid-view { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
-            .channel-grid.card-view { grid-template-columns: repeat(auto-fill, minmax(115px, 1fr)); }
-            .channel-grid.tile-view { grid-template-columns: repeat(auto-fill, minmax(65px, 1fr)); }
-            .channel-item .ch-name { font-size: 0.6rem; }
-            .channel-item img { width: 16px; height: 16px; }
-            .channel-grid.card-view .channel-item img { width: 38px; height: 38px; }
-            .status-bar .channel-info .ch-name { max-width: 30%; }
-            .search-bar input { font-size: 0.6rem; padding: 2px 8px; }
-            .search-bar .search-btn { font-size: 0.6rem; padding: 2px 10px; }
-            .header-title { font-size: 1.1rem; }
-            .header-title .sub { display: none; }
-            .header-center .clock { font-size: 0.9rem; }
-            .header-center .date { font-size: 0.7rem; }
-            .header-left .logo-img { width: 20px; height: 20px; }
-            .menu-btn { font-size: 22px; }
-            .status-badge { font-size: 0.5rem; padding: 2px 8px; }
-            .sidebar { padding: 10px 12px 50px; }
-            .sidebar .section-title { font-size: 0.8rem; }
-            .sidebar label { font-size: 0.7rem; }
-            .sidebar input { font-size: 0.7rem; padding: 5px 8px; }
-            .sidebar .btn { font-size: 0.7rem; padding: 4px 8px; }
-            .sidebar .btn-sm { font-size: 0.6rem; padding: 3px 6px; }
-            .toast-container { max-width: 240px; bottom: 50px; }
-            .footer .dmca-footer { font-size: 0.4rem; }
-            .notif-panel { width: 280px; right: -280px; }
-            .search-bar { order: 0; border-bottom: 1px solid #1a1a30; border-top: none; }
-            .modal-box { padding: 16px 18px; max-width: 95vw; }
-            .modal-box .modal-title { font-size: 1.2rem; }
-            .modal-box .modal-body { font-size: 0.9rem; }
+            .channel-grid.grid-view {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
+            .channel-grid.card-view {
+                grid-template-columns: repeat(auto-fill, minmax(115px, 1fr));
+            }
+            .channel-grid.tile-view {
+                grid-template-columns: repeat(auto-fill, minmax(65px, 1fr));
+            }
+            .channel-item .ch-name {
+                font-size: 0.6rem;
+            }
+            .channel-item img {
+                width: 16px;
+                height: 16px;
+            }
+            .channel-grid.card-view .channel-item img {
+                width: 38px;
+                height: 38px;
+            }
+            .status-bar .channel-info .ch-name {
+                max-width: 30%;
+            }
+            .search-bar input {
+                font-size: 0.6rem;
+                padding: 2px 8px;
+            }
+            .search-bar .search-btn {
+                font-size: 0.6rem;
+                padding: 2px 10px;
+            }
+            .header-title {
+                font-size: 1.1rem;
+            }
+            .header-title .sub {
+                display: none;
+            }
+            .header-center .clock {
+                font-size: 0.9rem;
+            }
+            .header-center .date {
+                font-size: 0.7rem;
+            }
+            .header-left .logo-img {
+                width: 20px;
+                height: 20px;
+            }
+            .menu-btn {
+                font-size: 22px;
+            }
+            .status-badge {
+                font-size: 0.5rem;
+                padding: 2px 8px;
+            }
+            .notif-panel {
+                width: 280px;
+                right: -280px;
+            }
             .footer {
                 font-size: 0.5rem;
-                padding: 2px 6px;
-                margin-top: 0 !important;
-                position: relative !important;
+                padding: 4px 6px;
             }
-            .footer .dev-footer {
-                font-size: 0.45rem;
+            .footer .dmca-footer {
+                font-size: 0.4rem;
             }
         }
 
         @media (max-width: 600px) {
             .video-wrapper {
-                max-height: 28vh;
+                max-height: 25vh;
             }
-            .channel-section {
-                flex: none !important;
-                max-height: none !important;
-                height: auto !important;
+            .channel-grid.grid-view {
+                grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
             }
-            .channel-grid-wrapper {
-                flex: none !important;
-                padding: 0 !important;
-                margin: 0 !important;
-                min-height: 0 !important;
-                max-height: none !important;
+            .channel-grid.card-view {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
             }
-            .channel-grid {
-                padding-bottom: 0 !important;
-                margin-bottom: 0 !important;
+            .channel-grid.tile-view {
+                grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
             }
-            .channel-grid.grid-view { grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)); }
-            .channel-grid.card-view { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
-            .channel-grid.tile-view { grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); }
-            .channel-item .ch-name { font-size: 0.55rem; }
-            .channel-item img { width: 14px; height: 14px; }
-            .channel-grid.card-view .channel-item img { width: 34px; height: 34px; }
-            .status-bar .channel-info .ch-name { max-width: 30%; }
-            .search-bar input { font-size: 0.55rem; padding: 2px 8px; }
-            .search-bar .search-btn { font-size: 0.55rem; padding: 2px 10px; }
-            .header-title { font-size: 1rem; }
-            .header-title .sub { display: none; }
-            .header-center .clock { font-size: 0.85rem; }
-            .header-center .date { font-size: 0.65rem; }
-            .header-left .logo-img { width: 18px; height: 18px; }
-            .menu-btn { font-size: 20px; }
-            .status-badge { font-size: 0.45rem; padding: 2px 6px; }
-            .sidebar { padding: 10px 12px 50px; }
-            .sidebar .section-title { font-size: 0.75rem; }
-            .sidebar label { font-size: 0.65rem; }
-            .sidebar input { font-size: 0.65rem; padding: 4px 6px; }
-            .sidebar .btn { font-size: 0.65rem; padding: 4px 6px; }
-            .sidebar .btn-sm { font-size: 0.55rem; padding: 3px 6px; }
-            .toast-container { max-width: 220px; bottom: 45px; }
-            .footer .dmca-footer { font-size: 0.35rem; }
-            .notif-panel { width: 260px; right: -260px; }
-            .search-bar { order: 0; border-bottom: 1px solid #1a1a30; border-top: none; }
-            .modal-box { padding: 14px 16px; max-width: 95vw; }
-            .modal-box .modal-title { font-size: 1.1rem; }
-            .modal-box .modal-body { font-size: 0.85rem; }
+            .channel-item .ch-name {
+                font-size: 0.55rem;
+            }
+            .channel-item img {
+                width: 14px;
+                height: 14px;
+            }
+            .channel-grid.card-view .channel-item img {
+                width: 34px;
+                height: 34px;
+            }
+            .status-bar .channel-info .ch-name {
+                max-width: 30%;
+            }
+            .search-bar input {
+                font-size: 0.55rem;
+                padding: 2px 8px;
+            }
+            .search-bar .search-btn {
+                font-size: 0.55rem;
+                padding: 2px 10px;
+            }
+            .header-title {
+                font-size: 1rem;
+            }
+            .header-title .sub {
+                display: none;
+            }
+            .header-center .clock {
+                font-size: 0.85rem;
+            }
+            .header-center .date {
+                font-size: 0.65rem;
+            }
+            .header-left .logo-img {
+                width: 18px;
+                height: 18px;
+            }
+            .menu-btn {
+                font-size: 20px;
+            }
+            .status-badge {
+                font-size: 0.45rem;
+                padding: 2px 6px;
+            }
+            .notif-panel {
+                width: 260px;
+                right: -260px;
+            }
             .footer {
                 font-size: 0.45rem;
-                padding: 2px 4px;
-                margin-top: 0 !important;
-                position: relative !important;
+                padding: 3px 4px;
             }
             .footer .dev-footer {
                 font-size: 0.4rem;
             }
+            .footer .dmca-footer {
+                font-size: 0.35rem;
+            }
         }
 
         @media (max-width: 400px) {
-            .channel-grid.grid-view { grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); }
-            .channel-grid.card-view { grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)); }
-            .channel-grid.tile-view { grid-template-columns: repeat(auto-fill, minmax(50px, 1fr)); }
-            .channel-item .ch-name { font-size: 0.5rem; }
-            .channel-grid.card-view .channel-item img { width: 30px; height: 30px; }
-            .status-bar .channel-info .ch-name { max-width: 25%; }
             .video-wrapper {
-                max-height: 25vh;
+                max-height: 22vh;
             }
-            .header-center .clock { font-size: 0.75rem; }
-            .header-center .date { font-size: 0.55rem; }
+            .channel-grid.grid-view {
+                grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+            }
+            .channel-grid.card-view {
+                grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+            }
+            .channel-grid.tile-view {
+                grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+            }
+            .channel-item .ch-name {
+                font-size: 0.5rem;
+            }
+            .channel-grid.card-view .channel-item img {
+                width: 30px;
+                height: 30px;
+            }
+            .status-bar .channel-info .ch-name {
+                max-width: 25%;
+            }
+            .header-center .clock {
+                font-size: 0.75rem;
+            }
+            .header-center .date {
+                font-size: 0.55rem;
+            }
+            .footer {
+                font-size: 0.4rem;
+                padding: 2px 4px;
+            }
         }
 
         @media (min-width: 1200px) {
-            .channel-grid.grid-view { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
-            .channel-grid.card-view { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
-            .video-wrapper { max-height: 62vh; }
-            .channel-section .tab-bar button { font-size: 1rem; padding: 4px 18px; }
-            .status-bar .nav-arrow { font-size: 1.2rem; padding: 4px 22px; }
-            .status-bar .channel-info { font-size: 1.3rem; }
-            .header-title { font-size: 1.6rem; }
-            .sidebar .section-title { font-size: 0.95rem; }
+            .channel-grid.grid-view {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            }
+            .channel-grid.card-view {
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            }
+            .video-wrapper {
+                max-height: 62vh;
+            }
+            .channel-section .tab-bar button {
+                font-size: 1rem;
+                padding: 4px 18px;
+            }
+            .status-bar .nav-arrow {
+                font-size: 1.2rem;
+                padding: 4px 22px;
+            }
+            .status-bar .channel-info {
+                font-size: 1.3rem;
+            }
+            .header-title {
+                font-size: 1.6rem;
+            }
+            .sidebar .section-title {
+                font-size: 0.95rem;
+            }
         }
     </style>
 </head>
@@ -1543,8 +1901,10 @@
                 const ampm = hours >= 12 ? 'PM' : 'AM';
                 hours = hours % 12 || 12;
                 clockDisplay.textContent = `${hours}:${minutes}:${seconds} ${ampm}`;
-                const days = ['রবিবার','সোমবার','মঙ্গলবার','বুধবার','বৃহস্পতিবার','শুক্রবার','শনিবার'];
-                const months = ['জানুয়ারি','ফেব্রুয়ারি','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্টেম্বর','অক্টোবর','নভেম্বর','ডিসেম্বর'];
+                const days = ['রবিবার', 'সোমবার', 'মঙ্গলবার', 'বুধবার', 'বৃহস্পতিবার', 'শুক্রবার', 'শনিবার'];
+                const months = ['জানুয়ারি', 'ফেব্রুয়ারি', 'মার্চ', 'এপ্রিল', 'মে', 'জুন', 'জুলাই', 'আগস্ট', 'সেপ্টেম্বর', 'অক্টোবর',
+                    'নভেম্বর', 'ডিসেম্বর'
+                ];
                 const dayName = days[now.getDay()];
                 const day = now.getDate();
                 const month = months[now.getMonth()];
@@ -1595,10 +1955,10 @@
                 const toast = document.createElement('div');
                 toast.className = 'toast';
                 toast.innerHTML = `
-                    <span class="toast-close">&times;</span>
-                    <div class="toast-title">${title}</div>
-                    <div>${message}</div>
-                `;
+                        <span class="toast-close">&times;</span>
+                        <div class="toast-title">${title}</div>
+                        <div>${message}</div>
+                    `;
                 toast.querySelector('.toast-close').addEventListener('click', () => toast.remove());
                 container.appendChild(toast);
                 if (duration > 0) setTimeout(() => toast.remove(), duration);
@@ -1606,6 +1966,7 @@
 
             // ===== Status message =====
             let statusTimeout = null;
+
             function showStatus(msg, autoClose = true, isVpnSuggestion = false) {
                 let vpnMsg = '';
                 if (isVpnSuggestion && !isVpnEnabled) {
@@ -1741,6 +2102,7 @@
 
             // ===== Modal =====
             function openModal() { aboutModal.classList.add('active'); }
+
             function closeModal() { aboutModal.classList.remove('active'); }
             aboutBtn.addEventListener('click', openModal);
             modalClose.addEventListener('click', closeModal);
@@ -1810,13 +2172,13 @@
                         category = 'Sports';
                     else if (/news|bbc|cnn|al jazeera|nbc|sky news|fox news|cnbc|ndtv|times now/i.test(full))
                         category = 'News';
-                    else if (/movie|entertain|hollywood|bollywood|hbo|netflix|disney|star world|cinema|film|zee|sony/i.test(full))
+                    else if (/movie|entertain|hollywood|bollywood|hbo|netflix|disney|star world|cinema|film|zee|sony/i.test(
+                        full))
                         category = 'Entertainment';
                     else if (/music|mtv|vh1|radio|song|concert|8tv/i.test(full))
                         category = 'Music';
                     else if (/kids|cartoon|nick|disney junior|pogo|boomerang|cartoon network|chutti/i.test(full))
                         category = 'Kids';
-                    // Audio-only detection – only if URL ends with audio extension or contains /radio/
                     const isAudioOnly = /\.(mp3|aac|ogg|wav|flac)$/i.test(ch.url) || /\/radio\//i.test(ch.url);
                     return { ...ch, category, played: false, headers: ch.headers || {}, isAudio: isAudioOnly };
                 });
@@ -1836,7 +2198,8 @@
             function renderPlaylistList() {
                 playlistListEl.innerHTML = '';
                 if (!playlists.length) {
-                    playlistListEl.innerHTML = `<div style="color:#555; padding:6px; text-align:center; font-size:0.7rem;">কোনো প্লেলিস্ট নেই</div>`;
+                    playlistListEl.innerHTML =
+                        `<div style="color:#555; padding:6px; text-align:center; font-size:0.7rem;">কোনো প্লেলিস্ট নেই</div>`;
                     return;
                 }
                 playlists.forEach((pl, idx) => {
@@ -1849,7 +2212,8 @@
                     actions.className = 'pl-actions';
                     const loadBtn = document.createElement('button');
                     loadBtn.textContent = '📂 লোড';
-                    loadBtn.addEventListener('click', (e) => { e.stopPropagation(); loadPlaylist(idx); });
+                    loadBtn.addEventListener('click', (e) => { e.stopPropagation();
+                        loadPlaylist(idx); });
                     const delBtn = document.createElement('button');
                     delBtn.textContent = '🗑️';
                     delBtn.title = 'মুছুন';
@@ -1883,7 +2247,8 @@
 
             function addPlaylist(name, data) {
                 if (!data || !data.length) return false;
-                playlists.push({ id: Date.now() + '_' + Math.random().toString(36).substr(2, 6), name: name || 'প্লেলিস্ট', data });
+                playlists.push({ id: Date.now() + '_' + Math.random().toString(36).substr(2, 6), name: name || 'প্লেলিস্ট',
+                    data });
                 savePlaylistsToStorage();
                 return true;
             }
@@ -1956,7 +2321,8 @@
                         let url = ch.link || '';
                         if (!url && ch.url) url = ch.url;
                         const cookie = headers.cookie || '';
-                        const userAgent = headers['user-agent'] || headers.userAgent || 'Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.71 Mobile Safari/537.36';
+                        const userAgent = headers['user-agent'] || headers.userAgent ||
+                            'Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.71 Mobile Safari/537.36';
                         const referer = headers.referer || 'https://toffeelive.com/';
                         return {
                             name: name,
@@ -2023,15 +2389,24 @@
             }
 
             // ===== Pre-defined buttons =====
-            loadFreeTVBtn.addEventListener('click', () => { loadPlaylistFromUrl(PLAYLISTS.freetv, 'Free IPTV'); toggleSidebar(false); });
-            loadJahangirBtn.addEventListener('click', () => { loadPlaylistFromUrl(PLAYLISTS.jahangir, 'Jahangir-IPTV'); toggleSidebar(false); });
-            loadArenaBtn.addEventListener('click', () => { loadPlaylistFromUrl(PLAYLISTS.arena, 'Arena Play'); toggleSidebar(false); });
-            loadLiveTVBtn.addEventListener('click', () => { loadPlaylistFromUrl(PLAYLISTS.livetv, 'Live TV'); toggleSidebar(false); });
-            loadShakilBtn.addEventListener('click', () => { loadPlaylistFromUrl(PLAYLISTS.shakil, 'Shakil TV'); toggleSidebar(false); });
-            loadMrgifyBtn.addEventListener('click', () => { loadPlaylistFromUrl(PLAYLISTS.mrgify, 'Mrgify IPTV'); toggleSidebar(false); });
-            loadSMLiveBtn.addEventListener('click', () => { loadPlaylistFromUrl(PLAYLISTS.smlive, 'SM Live TV'); toggleSidebar(false); });
-            loadLupaelBtn.addEventListener('click', () => { loadPlaylistFromUrl(PLAYLISTS.lupael, 'Lupael/IPTV-org'); toggleSidebar(false); });
-            loadToffeeBtn.addEventListener('click', () => { loadToffeePlaylist(); toggleSidebar(false); });
+            loadFreeTVBtn.addEventListener('click', () => { loadPlaylistFromUrl(PLAYLISTS.freetv, 'Free IPTV');
+                toggleSidebar(false); });
+            loadJahangirBtn.addEventListener('click', () => { loadPlaylistFromUrl(PLAYLISTS.jahangir, 'Jahangir-IPTV');
+                toggleSidebar(false); });
+            loadArenaBtn.addEventListener('click', () => { loadPlaylistFromUrl(PLAYLISTS.arena, 'Arena Play');
+                toggleSidebar(false); });
+            loadLiveTVBtn.addEventListener('click', () => { loadPlaylistFromUrl(PLAYLISTS.livetv, 'Live TV');
+                toggleSidebar(false); });
+            loadShakilBtn.addEventListener('click', () => { loadPlaylistFromUrl(PLAYLISTS.shakil, 'Shakil TV');
+                toggleSidebar(false); });
+            loadMrgifyBtn.addEventListener('click', () => { loadPlaylistFromUrl(PLAYLISTS.mrgify, 'Mrgify IPTV');
+                toggleSidebar(false); });
+            loadSMLiveBtn.addEventListener('click', () => { loadPlaylistFromUrl(PLAYLISTS.smlive, 'SM Live TV');
+                toggleSidebar(false); });
+            loadLupaelBtn.addEventListener('click', () => { loadPlaylistFromUrl(PLAYLISTS.lupael, 'Lupael/IPTV-org');
+                toggleSidebar(false); });
+            loadToffeeBtn.addEventListener('click', () => { loadToffeePlaylist();
+                toggleSidebar(false); });
             loadYuppTVBtn.addEventListener('click', () => {
                 window.open(PLAYLISTS.yupptv, '_blank');
                 addNotification('🌍 YuppTV', 'ওয়েবসাইটে রিডাইরেক্ট করা হচ্ছে');
@@ -2045,7 +2420,8 @@
                 const pass = xtreamPass.value.trim();
                 if (!server || !user || !pass) { xtreamStatus.textContent = '❌ সব ফিল্ড পূরণ করুন।'; return; }
                 let base = server.replace(/\/+$/, '');
-                const url = `${base}/player_api.php?username=${encodeURIComponent(user)}&password=${encodeURIComponent(pass)}`;
+                const url =
+                `${base}/player_api.php?username=${encodeURIComponent(user)}&password=${encodeURIComponent(pass)}`;
                 xtreamStatus.textContent = '⏳ লোড হচ্ছে...';
                 loadStatus.className = 'load-status loading';
                 loadStatus.textContent = '⏳ Xtream লোড...';
@@ -2158,7 +2534,8 @@
                 }
                 channelGrid.innerHTML = '';
                 if (!list.length) {
-                    channelGrid.innerHTML = `<div style="color:#555; padding:20px; text-align:center; width:100%;">কোনো চ্যানেল নেই</div>`;
+                    channelGrid.innerHTML =
+                        `<div style="color:#555; padding:20px; text-align:center; width:100%;">কোনো চ্যানেল নেই</div>`;
                     updateNowPlaying();
                     return;
                 }
@@ -2170,7 +2547,8 @@
                     else div.classList.add('not-working');
 
                     const initial = ch.name ? ch.name.charAt(0).toUpperCase() : '?';
-                    const defaultLogo = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23333'/%3E%3Ctext x='50' y='55' font-size='40' text-anchor='middle' fill='%23ccc' font-family='sans-serif'%3E${encodeURIComponent(initial)}%3C/text%3E%3C/svg%3E`;
+                    const defaultLogo =
+                        `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23333'/%3E%3Ctext x='50' y='55' font-size='40' text-anchor='middle' fill='%23ccc' font-family='sans-serif'%3E${encodeURIComponent(initial)}%3C/text%3E%3C/svg%3E`;
                     const img = document.createElement('img');
                     img.src = ch.logo || defaultLogo;
                     img.onerror = function() { this.src = defaultLogo; };
@@ -2201,7 +2579,8 @@
                 });
 
                 const list2 = getFilteredChannels(currentTab);
-                const filtered = searchQuery.trim() ? list2.filter(c => c.name.toLowerCase().includes(searchQuery.trim().toLowerCase())) : list2;
+                const filtered = searchQuery.trim() ? list2.filter(c => c.name.toLowerCase().includes(searchQuery.trim()
+                    .toLowerCase())) : list2;
                 document.querySelectorAll('.channel-item').forEach((el, i) => {
                     const ch = filtered[i];
                     if (ch) {
@@ -2219,8 +2598,10 @@
 
             // ===== Player =====
             function destroyPlayers() {
-                if (currentHls) { currentHls.destroy(); currentHls = null; }
-                if (currentMpegts) { currentMpegts.destroy(); currentMpegts = null; }
+                if (currentHls) { currentHls.destroy();
+                    currentHls = null; }
+                if (currentMpegts) { currentMpegts.destroy();
+                    currentMpegts = null; }
                 video.pause();
                 video.src = '';
                 video.load();
@@ -2236,19 +2617,15 @@
                 statusBadge.style.color = '#ff8800';
                 const u = url.toLowerCase();
 
-                // Audio-only detection (strict)
                 const isAudioOnly = /\.(mp3|aac|ogg|wav|flac)$/i.test(u) || /\/radio\//i.test(u);
                 if (isAudioOnly) {
-                    // This is a pure audio stream – just play the audio, no visualizer needed
                     video.src = url;
                     video.play().catch(() => handlePlayError());
                     markChannelWorking(true);
-                    // Show a small message that it's audio
                     showStatus('🎵 অডিও-ওনলি স্ট্রিম', true);
                     return;
                 }
 
-                // HLS
                 if (u.includes('.m3u8') || u.includes('m3u8')) {
                     if (Hls.isSupported()) {
                         const hlsConfig = {
@@ -2273,7 +2650,6 @@
                         });
                         hls.on(Hls.Events.ERROR, (e, data) => {
                             if (data.fatal) {
-                                // Check if it's a codec issue
                                 if (data.details === 'manifestIncompatibleCodecsError') {
                                     showStatus('⚠️ এই চ্যানেলটি H.265 (HEVC) – VLC ব্যাকএন্ড প্রয়োজন', false);
                                     statusBadge.innerText = '⚠️ H.265';
@@ -2292,7 +2668,6 @@
                     } else { handlePlayError(); return; }
                 }
 
-                // MPEG-TS
                 if (u.includes('.ts') || u.includes('ts')) {
                     if (mpegts.isSupported()) {
                         const player = mpegts.createPlayer({ type: 'mpegts', url, enableWorker: true, lazyLoad: true });
@@ -2311,7 +2686,6 @@
                     }
                 }
 
-                // Fallback (MP4, etc.)
                 video.src = url;
                 video.play().catch(() => handlePlayError());
                 markChannelWorking(true);
@@ -2345,13 +2719,12 @@
                 showStatusWithSpinner(`🎬 লোড হচ্ছে: ${ch.name}...`);
                 document.querySelectorAll('.channel-item').forEach(el => el.classList.remove('active'));
                 updateNowPlaying();
-                if (!ch.url) { showStatus('❌ এই চ্যানেলের URL নেই।', false); return; }
+                if (!ch.url) { showStatus('❌ এই চ্যানেলের URL নেই။', false); return; }
                 equalizer.classList.remove('paused');
                 statusBadge.innerText = '⏳ লোডিং...';
                 statusBadge.style.borderColor = '#ffaa00';
                 statusBadge.style.color = '#ffaa00';
 
-                // VLC-first: if VLC toggle is on and backend healthy, try VLC first
                 if (vlcToggle.checked && vlcBackendHealthy) {
                     const ok = await playWithVlc(ch.url);
                     if (ok) {
@@ -2359,11 +2732,9 @@
                         renderAll();
                         return;
                     }
-                    // VLC failed, fallback to browser
                     console.warn('VLC failed, falling back to browser');
                 }
 
-                // Browser engine
                 playWithBrowser(ch.url, ch.headers || {});
             }
 
@@ -2384,6 +2755,7 @@
                 const next = (currentIndex + 1) % allChannels.length;
                 playChannel(next);
             }
+
             function prevChannel() {
                 if (!allChannels.length) return;
                 const prev = (currentIndex - 1 + allChannels.length) % allChannels.length;
@@ -2394,9 +2766,13 @@
 
             document.addEventListener('keydown', (e) => {
                 if (e.target.tagName === 'INPUT') return;
-                if (e.key === 'ArrowRight') { e.preventDefault(); nextChannel(); }
-                if (e.key === 'ArrowLeft') { e.preventDefault(); prevChannel(); }
-                if (e.key === '/') { e.preventDefault(); searchInput.focus(); searchInput.select(); }
+                if (e.key === 'ArrowRight') { e.preventDefault();
+                    nextChannel(); }
+                if (e.key === 'ArrowLeft') { e.preventDefault();
+                    prevChannel(); }
+                if (e.key === '/') { e.preventDefault();
+                    searchInput.focus();
+                    searchInput.select(); }
                 if (e.key === 'Enter') { if (searchInput.value.trim()) performSearch(); }
             });
 
@@ -2476,8 +2852,12 @@
                 const loaded = loadFromStorage();
                 if (!loaded) {
                     const demo = [
-                        { name: 'Big Buck Bunny (MP4)', logo: '', url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4', category: 'Others', played: false, headers: {}, isAudio: false },
-                        { name: 'HLS Test (m3u8)', logo: '', url: 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8', category: 'Others', played: false, headers: {}, isAudio: false }
+                        { name: 'Big Buck Bunny (MP4)', logo: '',
+                            url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+                            category: 'Others', played: false, headers: {}, isAudio: false },
+                        { name: 'HLS Test (m3u8)', logo: '',
+                            url: 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8', category: 'Others',
+                            played: false, headers: {}, isAudio: false }
                     ];
                     allChannels = demo;
                     renderAll();
@@ -2608,9 +2988,7 @@
                     }
                 });
 
-                // Save VLC backend URL when changed
                 vlcToggle.addEventListener('change', function() {
-                    // Re-check VLC backend when toggled
                     checkVlcBackend();
                 });
             });
